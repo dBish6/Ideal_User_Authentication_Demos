@@ -5,7 +5,11 @@
 */
 
 import { useState } from "react";
+
 import "./App.css";
+
+import BlobBundle from "./components/blobBundle/BlobBundle";
+import Form from "./components/form";
 
 // What back-end would you like to use; same front-end for every demo.
 
@@ -15,7 +19,12 @@ function App() {
     node: false,
   });
 
-  return <></>;
+  return (
+    <main>
+      <BlobBundle />
+      <Form />
+    </main>
+  );
 }
 
 export default App;
