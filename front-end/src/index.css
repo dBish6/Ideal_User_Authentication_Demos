@@ -6,15 +6,8 @@
 }
 
 html {
-  background-color: #282c34;
-}
-
-:root {
-  --lvl1: #24202f;
-  --lvl2: #26232f;
-  --accent: #8258c3;
-  --accentMed: #af86f0;
-  --accentLgt: #caaef5;
+  background-image: url("./assets/Noise.png");
+  background-color: #f2f2f2;
 }
 
 body {
@@ -26,5 +19,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  color-scheme: dark;
+}
+
+:root {
+  --lvl1: #24202f;
+  --lvl2: #26232f;
+  --accent: #8258c3;
+  --accentMed: #af86f0;
+  --accentLgt: #caaef5;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }

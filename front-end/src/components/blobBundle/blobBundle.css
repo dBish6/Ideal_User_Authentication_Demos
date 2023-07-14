@@ -1,0 +1,33 @@
+.blob {
+  position: absolute;
+  filter: blur(100px);
+}
+
+.blueBlob {
+  top: -91px;
+  right: 120px;
+  width: 618.553px;
+  height: 546.753px;
+}
+
+.purpleBlob {
+  top: 0;
+  left: 0;
+  width: 491px;
+  height: 623px;
+}
+
+.redBlob {
+  left: 215px;
+  bottom: -198px;
+  width: 582.534px;
+  height: 609.216px;
+  transform: rotate(74.24deg);
+}
+
+.greenBlob {
+  right: -54px;
+  bottom: -265px;
+  width: 574.428px;
+  height: 657.446px;
+}
