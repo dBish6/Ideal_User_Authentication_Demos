@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,7 +27,7 @@ public class AuthController {
         return authService.getUsers();
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/user")
     public UserDetails getUserDetails(@CookieValue(name = "session") String token) {
         return authService.getUserDetails(token);
     }
@@ -65,9 +66,9 @@ public class AuthController {
         return null;
     }
 
-
     @DeleteMapping("/user")
-    public ResponseEntity<String> deleteUser(@RequestBody String email) {
+    public ResponseEntity<String> deleteUser(@RequestBody Map<String, Object> req) {
+        String email = (String) req.get("email");
         authService.deleteUser(email);
         return ResponseEntity.ok("User " + email + " was successfully deleted.");
     }

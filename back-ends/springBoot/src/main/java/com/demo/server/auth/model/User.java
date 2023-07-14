@@ -26,7 +26,7 @@ public class User implements UserDetails {
     private static final long serialVersionUID = 5566802096865654814L; // For Redis
     @Identifier
     private String email;
-    private String username;
+    private String displayName;
     private String fullName;
     private String password;
     private Role role;

@@ -38,7 +38,7 @@ public class AuthService {
     public void register(RegisterRequest req) {
         User user = User.builder()
                 .email(req.getEmail())
-                .username(req.getUsername())
+                .displayName(req.getDisplayName())
                 .fullName(req.getFirstName() + " " + req.getLastName())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .role(new Role(Role.ROLE_USER))
