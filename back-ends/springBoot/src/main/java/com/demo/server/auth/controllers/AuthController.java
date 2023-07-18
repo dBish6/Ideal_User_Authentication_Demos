@@ -34,7 +34,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest req) {
-        System.out.print(req);
         authService.register(req);
         return ResponseEntity.ok("User was successfully registered.");
     }
@@ -50,7 +49,7 @@ public class AuthController {
 
     @PostMapping("/login/google")
     public ResponseEntity<Object> loginGoogleUser(@RequestBody LoginRequest req) {
-        // Get accesses token and create a JWT for a session.
+        // Get access token and create a JWT for a session.
         return null;
     }
 
@@ -66,9 +65,8 @@ public class AuthController {
         return null;
     }
 
-    @DeleteMapping("/user")
-    public ResponseEntity<String> deleteUser(@RequestBody Map<String, Object> req) {
-        String email = (String) req.get("email");
+    @DeleteMapping("/user/{email}")
+    public ResponseEntity<String> deleteUser(@PathVariable String email) {
         authService.deleteUser(email);
         return ResponseEntity.ok("User " + email + " was successfully deleted.");
     }

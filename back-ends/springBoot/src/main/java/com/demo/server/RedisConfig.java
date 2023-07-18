@@ -11,7 +11,7 @@ public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory() {
-        RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration("127.0.0.1", 6379); // "192.168.0.80"
+        RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration("127.0.0.1", 6379);
         return new LettuceConnectionFactory(redisConfiguration);
     }
 
