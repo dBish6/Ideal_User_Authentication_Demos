@@ -13,7 +13,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = (User) redisTemplate.opsForHash().get("users", username);
+        User user = (User) redisTemplate.opsForHash().get("springUsers", username);
         if (user != null) {
             return user;
         }

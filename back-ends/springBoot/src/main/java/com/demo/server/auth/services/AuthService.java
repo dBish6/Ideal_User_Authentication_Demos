@@ -27,7 +27,7 @@ import java.util.Map;
 public class AuthService {
     @Autowired
     private final RedisTemplate<String, Object> redisTemplate;
-    private static final String KEY = "users";
+    private static final String KEY = "springUsers";
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
