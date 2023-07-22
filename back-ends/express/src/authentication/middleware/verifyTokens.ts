@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { isRefreshTokenValid } from "authentication/services/jwtService";
+import { isRefreshTokenValid } from "../services/jwtService";
 
 export const verifyAccessToken = async (
   req: Request,

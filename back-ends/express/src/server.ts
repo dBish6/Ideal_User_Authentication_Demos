@@ -16,7 +16,7 @@ import helmet from "helmet";
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 
-import { default as authRouter } from "authentication/routes/authRoute";
+import authRouter from "./authentication/routes/authRoute";
 
 const app = express();
 dotenv.config();
@@ -54,7 +54,7 @@ app.use((req, res, next) => {
 });
 
 // *Router*
-app.use("/auth", authRouter);
+app.use("/api/auth", authRouter);
 
 app.listen(PORT, "localhost", () =>
   console.log(

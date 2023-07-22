@@ -1,7 +1,7 @@
-import User from "model/User";
+import User from "../../model/User";
 import { Request, Response, NextFunction } from "express";
 import { compare } from "bcrypt";
-import { getUser } from "authentication/services/authService";
+import { getUser } from "../services/authService";
 
 // This is used on the login route to verify the credentials that was passed in the req.body.
 const verifyUserInCache = async (

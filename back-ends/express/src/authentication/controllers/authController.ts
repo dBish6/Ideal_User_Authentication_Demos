@@ -1,7 +1,7 @@
-import User from "model/User";
+import User from "../../model/User";
 import { Request, Response, NextFunction } from "express";
-import * as authService from "authentication/services/authService";
-import * as jwtService from "authentication/services/jwtService";
+import * as authService from "../services/authService";
+import * as jwtService from "../services/jwtService";
 
 export const getUsers = async (
   req: Request,
@@ -74,7 +74,7 @@ export const register = async (
   next: NextFunction
 ) => {
   try {
-    // Create user.
+    // Creates the user.
     const user = await authService.register(req.body);
 
     res.status(200).json(user);
@@ -145,12 +145,6 @@ export const refresh = async (
         secure: true,
         sameSite: "none",
       });
-    // res.cookie("refresh", refreshToken, {
-    //   maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week.
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: "none",
-    // });
   } catch (error) {
     // res.status(500).json({
     //   fsRes: false,
