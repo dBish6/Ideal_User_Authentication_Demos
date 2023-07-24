@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,9 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "91258728c9172c72386a1ddfad486d5a926788f4467db2957f4ca222c8bada25";
-
+    @Value("${JWT_SECRET}")
+    private static String JWT_SECRET;
+    
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
@@ -38,7 +40,7 @@ public class JwtService {
 
     // Ensures the JWT wasn't changed along the way and is the same sender.
     public Key getSignInKey() {
-        byte[] keyDecoded = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyDecoded = Decoders.BASE64.decode(JWT_SECRET);
         return Keys.hmacShaKeyFor(keyDecoded);
     }
 
