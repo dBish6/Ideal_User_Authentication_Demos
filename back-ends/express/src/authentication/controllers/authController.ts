@@ -37,7 +37,7 @@ export const getUser = async (
       });
     }
     let user: User = JSON.parse(userData),
-      { password, ...rest } = user; // Remove password for sending to front-end.
+      { password, ...rest } = user; // Remove password before sending to front-end.
     user = rest as any;
 
     return res.status(200).json(user);
