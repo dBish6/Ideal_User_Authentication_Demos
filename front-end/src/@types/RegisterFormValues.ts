@@ -1,4 +1,4 @@
-export type RegisterValues = {
+export type RegisterFormValues = {
   username: string;
   firstName: string;
   lastName: string;

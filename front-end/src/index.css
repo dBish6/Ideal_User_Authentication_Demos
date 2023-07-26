@@ -1,3 +1,9 @@
+/* Designer: David Bishop
+   Base Styles
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -6,32 +12,66 @@
 }
 
 html {
-  background-image: url("./assets/Noise.png");
   background-color: #f2f2f2;
+  background-image: url("./assets/NoiseBlobBackground.png");
+  background-attachment: fixed;
+  background-position: center;
+  /* background-position: left; */
+  background-repeat: no-repeat;
+  /* overflow: hidden; */
 }
 
+/* TODO: Back up font. */
 body {
-  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif; */
+  font-family: "Oxanium", cursive;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  color: var(--txt);
+}
+
+.contentWrapper {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  padding-inline: 4rem;
 }
 
 :root {
-  --lvl1: #24202f;
-  --lvl2: #26232f;
-  --accent: #8258c3;
-  --accentMed: #af86f0;
-  --accentLgt: #caaef5;
+  --black: #242424;
+  --txt: #626262;
+  --hTxt: #363636;
+  --lvl1: rgba(242, 242, 242, 0.7);
+  --lvl2: #f2f2f2;
+  --active: #d6d6d6;
+
+  --medShad: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --larShad: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --larBtnShad: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 main {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  flex-direction: column;
 }
+
+button {
+  font-family: "Oxanium", cursive;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+input {
+  outline: none;
+}
+
+/* a {
+  color: var(--txt);
+  text-decoration: none;
+} */

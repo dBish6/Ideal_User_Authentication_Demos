@@ -1,29 +1,61 @@
 /* User Authentication Demo
 
    Author: David Bishop
-   Creation Date: July 5, 2023
+   Creation Date: July 13, 2023
 */
 
-import { useState } from "react";
+import { lazy, Suspense } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 
-import "./App.css";
+import ColorPropertiesOnBackendType from "./utils/ColorPropertiesOnBackendType";
 
-import BlobBundle from "./components/blobBundle/BlobBundle";
-import Form from "./components/form";
+import Header from "./components/partials/header";
+import Footer from "./components/partials/footer";
+import Select from "./pages/Select";
+const LoginRegister = lazy(() => import("./pages/LoginRegister"));
 
-// What back-end would you like to use; same front-end for every demo.
-
-function App() {
-  const [selectedBackEnd, setSelectedBackEnd] = useState({
-    javaSpring: true,
-    node: false,
-  });
+const Structure = () => {
+  ColorPropertiesOnBackendType();
 
   return (
-    <main>
-      <BlobBundle />
-      <Form />
-    </main>
+    <>
+      <div role="presentation" className="contentWrapper">
+        <Header />
+        <main>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </>
+  );
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route element={<Structure />}>
+            <Route path="/" element={<Navigate to="/select" />} />
+            <Route
+              path="/select"
+              element={<Select title="Choose a Back-end" />}
+            />
+            <Route
+              path="/register"
+              element={<LoginRegister title="Register" />}
+            />
+            <Route path="/users" element={<LoginRegister title="Register" />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 
