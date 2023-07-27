@@ -1,6 +1,8 @@
-import { FieldError } from "react-hook-form";
+import { UseFormRegister, RegisterOptions, FieldError } from "react-hook-form";
 
 export type InputProps = {
-  type: string;
+  field: string;
+  register: UseFormRegister<any>;
+  registerOptions: RegisterOptions<any, string>;
   error?: FieldError;
 };

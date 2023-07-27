@@ -1,7 +1,10 @@
 import { PagesProps } from "../@types/PagesProps";
 import Selector from "../components/selector";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const Landing = ({ title }: PagesProps) => {
+  useDocumentTitle(title);
+
   return (
     <>
       <p

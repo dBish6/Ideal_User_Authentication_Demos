@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { GlobalContextProvider } from "./contexts/GlobalContext";
+import { AuthContextProvider } from "./contexts/AuthContext";
 import App from "./App";
 
 const root = ReactDOM.createRoot(
@@ -8,6 +9,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <GlobalContextProvider>
-    <App />
+    <AuthContextProvider>
+      <App />
+    </AuthContextProvider>
   </GlobalContextProvider>
 );

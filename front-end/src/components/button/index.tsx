@@ -1,5 +1,7 @@
 import { ButtonProps } from "../../@types/ButtonProps";
+import { useRef } from "react";
 import "./button.css";
+import useKeyboardHelper from "../../hooks/useKeyboardHelper";
 
 const Button = ({
   text,
@@ -11,13 +13,16 @@ const Button = ({
   className,
   ...options
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-  // TODO: Keyboard selected.
+  const btnRef = useRef<HTMLButtonElement>(null),
+    handleKeyDown = useKeyboardHelper();
 
   return (
     <button
       className={className ? `btnMain ${className}` : "btnMain"}
       style={{ ...style }}
+      ref={btnRef}
       onClick={onClick}
+      onKeyDown={(e) => handleKeyDown(e, btnRef)}
       {...options}
     >
       <span className="btnTop">

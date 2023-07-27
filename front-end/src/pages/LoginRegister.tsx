@@ -1,8 +1,10 @@
 import { PagesProps } from "../@types/PagesProps";
-import InitializeCsrfToken from "../api_services/InitializeCsrfToken";
 import Form from "../components/form";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import InitializeCsrfToken from "../api_services/InitializeCsrfToken";
 
 const LoginRegister = ({ title }: PagesProps) => {
+  useDocumentTitle(title);
   InitializeCsrfToken();
 
   return <Form />;

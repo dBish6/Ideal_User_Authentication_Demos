@@ -25,7 +25,7 @@ const Selector = () => {
       <Button
         text="Proceed"
         style={{ maxWidth: "524px" }}
-        onClick={() => selectedBackEnd && navigate("/register")}
+        onClick={() => selectedBackEnd && navigate("/login-register")}
       />
     </>
   );

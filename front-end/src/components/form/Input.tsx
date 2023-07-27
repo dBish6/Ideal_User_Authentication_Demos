@@ -2,22 +2,25 @@ import { InputProps } from "../../@types/InputProps";
 import capitalize from "../../utils/capitalize";
 
 const Input = ({
-  type,
+  field,
+  register,
+  registerOptions,
   error,
   ...options
 }: InputProps & React.InputHTMLAttributes<HTMLInputElement>) => {
   return (
-    <div className={`${type}Wrapper`}>
+    <div className={`${field}Wrapper`}>
       <div className="inputWrapper">
         <input
           aria-required="true"
-          id={type}
-          // name={type}
+          id={field}
+          // name={field}
+          {...register(field, registerOptions)}
           autoComplete="off"
           {...options}
         />
-        <label htmlFor={type}>
-          {capitalize(type)}
+        <label htmlFor={field}>
+          {capitalize(field)}
           <span aria-label="Required">*</span>
         </label>
       </div>

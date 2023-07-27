@@ -13,11 +13,15 @@ import {
   Outlet,
 } from "react-router-dom";
 
-import ColorPropertiesOnBackendType from "./utils/ColorPropertiesOnBackendType";
-
 import Header from "./components/partials/header";
 import Footer from "./components/partials/footer";
 import Select from "./pages/Select";
+import Error401 from "./pages/errors/Error401";
+import Error403 from "./pages/errors/Error403";
+import Error404 from "./pages/errors/Error404";
+
+import ColorPropertiesOnBackendType from "./utils/ColorPropertiesOnBackendType";
+
 const LoginRegister = lazy(() => import("./pages/LoginRegister"));
 
 const Structure = () => {
@@ -48,10 +52,14 @@ function App() {
               element={<Select title="Choose a Back-end" />}
             />
             <Route
-              path="/register"
+              path="/login-register"
               element={<LoginRegister title="Register" />}
             />
-            <Route path="/users" element={<LoginRegister title="Register" />} />
+            <Route path="/users" element={<LoginRegister title="Users" />} />
+            <Route path="/error-401" element={<Error401 title="ERROR" />} />
+            <Route path="/error-403" element={<Error403 title="ERROR" />} />
+            <Route path="/error-404" element={<Error404 title="ERROR" />} />
+            <Route path="*" element={<Navigate to="/error-404" />} />
           </Route>
         </Routes>
       </Suspense>

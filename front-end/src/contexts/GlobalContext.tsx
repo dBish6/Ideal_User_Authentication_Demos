@@ -1,9 +1,7 @@
-import { GlobalContextValues } from "../@types/GlobalContextValues";
+import { GlobalContextValues } from "../@types/contexts/GlobalContextValues";
 import { createContext, useState, useContext, useEffect } from "react";
 
-const GlobalContextContext = createContext<GlobalContextValues | undefined>(
-  undefined
-);
+const GlobalContext = createContext<GlobalContextValues | undefined>(undefined);
 
 export const GlobalContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
@@ -17,19 +15,19 @@ export const GlobalContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   }, [selectedBackEnd]);
 
   return (
-    <GlobalContextContext.Provider
+    <GlobalContext.Provider
       value={{
         selectedBackEnd,
         setSelectedBackEnd,
       }}
     >
       {children}
-    </GlobalContextContext.Provider>
+    </GlobalContext.Provider>
   );
 };
 
-export const useGlobalContext = (): GlobalContextValues => {
-  const context = useContext(GlobalContextContext);
+export const useGlobalContext = () => {
+  const context = useContext(GlobalContext);
   if (!context)
     throw new Error(
       "useGlobalContext must be used within a GlobalContextProvider."

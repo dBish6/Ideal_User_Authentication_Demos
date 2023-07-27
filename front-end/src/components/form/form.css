@@ -1,4 +1,5 @@
 .formWrapper {
+  position: relative;
   border: 1px solid var(--black);
   background-color: var(--lvl1);
   box-shadow: 8px 8px 0px 0px var(--g500);
@@ -6,13 +7,42 @@
   max-width: 430px;
 }
 
+.formWrapper > button {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  border: 1px solid var(--black);
+  background-color: var(--lvl2);
+  min-width: 3rem;
+  min-height: 3rem;
+  transition: 0.2s ease-in-out background-color;
+}
+
+.formWrapper > button:hover,
+.formWrapper > button:focus-visible {
+  background-color: #e7e7e7;
+}
+
+.formWrapper > button:active,
+.formWrapper > button.selected {
+  background-color: var(--active);
+  top: 2px;
+}
+
 .formWrapper .formContent {
   padding: 1rem 2rem 1rem 2rem;
 }
 
+/* .formWrapper .formContent:has(.title .loginHeading) {
+  padding-bottom: 2rem;
+} */
+
 .formWrapper .formContent .title {
   display: grid;
   place-items: center;
+  /* transition: 0.5s ease-out all; */
 }
 
 /* .formContent h2,
@@ -68,8 +98,8 @@
   width: 100%;
   height: 48px;
   padding-inline: 1rem;
-  background-color: var(--lvl2);
   border: 1px solid var(--black);
+  background-color: var(--lvl2);
 }
 
 .formWrapper .formContent form .inputWrapper label {
@@ -85,7 +115,13 @@
   color: rgba(36, 36, 36, 0.85);
 }
 
-.formWrapper .formContent form .inputWrapper input:focus + label {
+.formWrapper .formContent form .inputWrapper input:focus + label,
+.formWrapper
+  .formContent
+  form
+  .inputWrapper
+  input:not(:placeholder-shown)
+  + label {
   top: -1.5%;
   font-size: 0.875rem;
   background-color: var(--lvl2);
@@ -136,11 +172,14 @@
 }
 
 .formWrapper .formContent > p:hover,
-.formWrapper .formContent > p:active {
+.formWrapper .formContent > p:focus-visible,
+.formWrapper .formContent > p:active,
+.formWrapper .formContent > p.selected {
   color: var(--hTxt);
 }
 
-.formWrapper .formContent > p:active {
+.formWrapper .formContent > p:active,
+.formWrapper .formContent > p.selected {
   top: 1px;
   text-decoration-color: var(--g500);
 }
@@ -162,7 +201,8 @@
 }
 
 .formWrapper .formFooter p:hover,
-.formWrapper .formFooter p:active {
+.formWrapper .formFooter p:active,
+.formWrapper .formFooter p:focus-visible {
   color: var(--hTxt);
   text-decoration-color: var(--hTxt);
 }

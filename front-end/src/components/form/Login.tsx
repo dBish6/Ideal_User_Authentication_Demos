@@ -1,22 +1,34 @@
 import { LoginFormValues } from "../../@types/LoginFormValues";
+
 import { useForm } from "react-hook-form";
+
 import Input from "./Input";
+import Button from "../button";
+
+import PostLogin from "../../api_services/PostLogin";
 
 const Login = () => {
   const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    watch,
-    // setError,
-  } = useForm<LoginFormValues>();
+      register,
+      formState: { errors },
+      handleSubmit,
+      watch,
+      setError,
+    } = useForm<LoginFormValues>(),
+    handleLogin = PostLogin(setError);
 
   return (
-    <form id="loginForm">
+    <form
+      id="loginForm"
+      onSubmit={handleSubmit(() => {
+        console.log(watch());
+        handleLogin(watch());
+      })}
+    >
       <Input
-        type="email"
-        error={errors.email}
-        {...register("email", {
+        field="email"
+        register={register}
+        registerOptions={{
           required: "Email is required.",
           pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -26,22 +38,17 @@ const Login = () => {
             value: 254,
             message: "This can't be your actual email, holy crap!.",
           },
-        })}
+        }}
+        error={errors.email}
+        placeholder=" "
       />
+
       <Input
-        type="password"
+        field="password"
+        register={register}
+        registerOptions={{ required: "Password is required." }}
         error={errors.password}
-        {...register("password", {
-          required: "Password is required.",
-          // minLength: {
-          //   value: 6,
-          //   message: "Password must be at least 6 characters.",
-          // },
-          // maxLength: {
-          //   value: 128,
-          //   message: "Max of 128 characters exceeded.",
-          // },
-        })}
+        placeholder=" "
       />
     </form>
   );

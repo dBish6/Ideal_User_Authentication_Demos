@@ -1,26 +1,39 @@
 import { RegisterFormValues } from "../../@types/RegisterFormValues";
+
 import { useForm } from "react-hook-form";
+
 import Input from "./Input";
 import Button from "../button";
 
-const Register = () => {
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    watch,
-    // setError,
-  } = useForm<RegisterFormValues>();
+import PostRegister from "../../api_services/PostRegister";
 
+const Register = () => {
   // TODO: Email already taken.
   // TODO: Verify email.
+  // TODO: View password.
+
+  const {
+      register,
+      formState: { errors },
+      handleSubmit,
+      watch,
+      setError,
+    } = useForm<RegisterFormValues>(),
+    handleRegister = PostRegister(setError);
+
+  console.log(watch());
 
   return (
-    <form onSubmit={handleSubmit(() => console.log(watch()))}>
+    <form
+      onSubmit={handleSubmit(() => {
+        console.log(watch());
+        handleRegister(watch());
+      })}
+    >
       <Input
-        type="username"
-        error={errors.username}
-        {...register("username", {
+        field="username"
+        register={register}
+        registerOptions={{
           required: "Username is required.",
           maxLength: {
             value: 24,
@@ -30,38 +43,44 @@ const Register = () => {
             value: 3,
             message: "You can make a better username than that...",
           },
-        })}
+        }}
+        error={errors.username}
+        placeholder=" "
       />
 
       <div className="nameWrapper">
         <Input
-          type="firstName"
-          error={errors.firstName}
-          {...register("firstName", {
+          field="firstName"
+          register={register}
+          registerOptions={{
             required: "First name is required.",
             maxLength: {
               value: 50,
               message: "Max of 50 characters exceeded.",
             },
-          })}
+          }}
+          error={errors.firstName}
+          placeholder=" "
         />
         <Input
-          type="lastName"
-          error={errors.lastName}
-          {...register("lastName", {
+          field="lastName"
+          register={register}
+          registerOptions={{
             required: "Last name is required.",
             maxLength: {
               value: 80,
               message: "Max of 80 characters exceeded.",
             },
-          })}
+          }}
+          error={errors.lastName}
+          placeholder=" "
         />
       </div>
 
       <Input
-        type="email"
-        error={errors.email}
-        {...register("email", {
+        field="email"
+        register={register}
+        registerOptions={{
           required: "Email is required.",
           pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -71,13 +90,15 @@ const Register = () => {
             value: 254,
             message: "This can't be your actual email, holy crap!.",
           },
-        })}
+        }}
+        error={errors.email}
+        placeholder=" "
       />
 
       <Input
-        type="password"
-        error={errors.password}
-        {...register("password", {
+        field="password"
+        register={register}
+        registerOptions={{
           required: "Password is required.",
           minLength: {
             value: 6,
@@ -87,19 +108,25 @@ const Register = () => {
             value: 128,
             message: "Max of 128 characters exceeded.",
           },
-        })}
+        }}
+        error={errors.password}
+        placeholder=" "
+        type="password"
       />
 
       <Input
-        type="conPassword"
-        error={errors.conPassword}
-        {...register("conPassword", {
+        field="conPassword"
+        register={register}
+        registerOptions={{
           required: "Please confirm your password.",
           maxLength: {
             value: 128,
             message: "Max of 128 characters exceeded.",
           },
-        })}
+        }}
+        error={errors.conPassword}
+        placeholder=" "
+        type="password"
       />
 
       <Button text="Register" type="submit" />

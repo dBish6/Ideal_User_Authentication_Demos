@@ -22,13 +22,18 @@ html {
 }
 
 /* TODO: Back up font. */
-body {
+body,
+input,
+button {
   font-family: "Oxanium", cursive;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+body {
   color: var(--txt);
 }
 
@@ -60,14 +65,21 @@ main {
   flex-direction: column;
 }
 
+h1,
+h2,
+h3 {
+  color: var(--hTxt);
+}
+
 button {
-  font-family: "Oxanium", cursive;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
 }
 
 input {
+  font-size: 1rem;
+  color: var(--txt);
   outline: none;
 }
 

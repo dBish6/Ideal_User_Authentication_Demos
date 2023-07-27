@@ -3,20 +3,18 @@ import { useEffect } from "react";
 import requestHandler from "./AxiosInstance";
 
 const InitializeCsrfToken = () => {
-  const { instance, abortController } = requestHandler(false); // backEndType state?
+  const { instance, abortController } = requestHandler(false);
 
   useEffect(() => {
+    // TODO: Need to not send the token when already initialized.
     const handleCsrf = async () => {
-      try {
-        const res = await instance({
-          method: "OPTIONS",
-          url: "/auth/csrf",
-        });
-        if (res) {
-          console.log(res);
-        }
-      } catch (error) {
-        console.error(error);
+      const res = await instance({
+        method: "OPTIONS",
+        url: "/auth/csrf",
+      });
+      if (res) {
+        console.log(res);
+        // TODO: Set boolean.
       }
     };
     handleCsrf();

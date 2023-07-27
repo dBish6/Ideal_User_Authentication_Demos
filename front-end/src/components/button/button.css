@@ -16,7 +16,8 @@
   box-shadow: var(--larShad);
 }
 
-.btnMain:not(.formWrapper .btnMain):active {
+.btnMain:not(.formWrapper .btnMain):active,
+.btnMain:not(.formWrapper .btnMain).selected {
   box-shadow: var(--medShad);
 }
 
@@ -36,7 +37,8 @@
   transform: translateY(calc(-3.5px - 4px));
 }
 
-.btnMain:active .btnTop {
+.btnMain:active .btnTop,
+.btnMain.selected .btnTop {
   transform: translateY(calc(3.5px - 4px));
   background-color: var(--active);
 }

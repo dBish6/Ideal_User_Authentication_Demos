@@ -6,10 +6,22 @@ const useKeyboardHelper = () => {
     funcParams?: any[]
   ) => {
     if (event.key === "Enter" || event.key === " ") {
-      if (func) funcParams ? func(...funcParams) : func();
-      if (ref) ref.current!.classList.add("selected");
+      if (ref) {
+        if (ref.current.classList) {
+          if (ref.current.classList.contains("selectBox")) {
+            ref.current.classList.add("selected");
+          } else {
+            // FIXME: Ref.current is null when func is passed in??
+            console.log("ref", ref);
+            ref.current.classList.add("selected");
+            setTimeout(() => {
+              ref.current.classList.remove("selected");
+            }, 350);
+          }
+        }
+      }
 
-      console.log("PRESSING");
+      if (func) funcParams ? func(...funcParams) : func();
     }
   };
 

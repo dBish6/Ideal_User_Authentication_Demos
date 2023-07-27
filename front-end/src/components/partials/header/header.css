@@ -6,7 +6,6 @@ header {
   grid-template-columns: 25% 1fr 25%; */
   padding: 2rem 0 2rem 0;
   font-family: "Source Serif 4", serif;
-  color: var(--hTxt);
 }
 
 header img {

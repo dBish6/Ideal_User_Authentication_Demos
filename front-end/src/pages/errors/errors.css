@@ -1,0 +1,22 @@
+.error h2,
+.error h3 {
+  text-align: center;
+}
+
+.error h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.error h2 span {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: red;
+}
+
+.error h3 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--txt);
+}
