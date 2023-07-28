@@ -1,3 +1,36 @@
 footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-block: 1.5rem 1rem;
+}
+
+footer > button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--txt);
+}
+
+footer > button {
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-style: italic;
+  text-decoration: underline;
+}
+
+footer > button:hover,
+footer > button:active {
+  color: var(--hTxt);
+  text-decoration-color: var(--hTxt);
+}
+
+footer > button:active {
+  top: 2px;
+}
+
+footer div {
+  min-width: 160px;
 }
