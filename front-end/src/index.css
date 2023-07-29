@@ -65,6 +65,11 @@ main {
   flex-direction: column;
 }
 
+header,
+footer {
+  font-family: "Source Serif 4", serif;
+}
+
 h1,
 h2,
 h3 {

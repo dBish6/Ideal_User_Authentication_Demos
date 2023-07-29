@@ -19,6 +19,7 @@ import Select from "./pages/Select";
 import Error401 from "./pages/errors/Error401";
 import Error403 from "./pages/errors/Error403";
 import Error404 from "./pages/errors/Error404";
+import Error500 from "./pages/errors/Error500";
 
 import ColorPropertiesOnBackendType from "./utils/ColorPropertiesOnBackendType";
 
@@ -59,6 +60,7 @@ function App() {
             <Route path="/error-401" element={<Error401 title="ERROR" />} />
             <Route path="/error-403" element={<Error403 title="ERROR" />} />
             <Route path="/error-404" element={<Error404 title="ERROR" />} />
+            <Route path="/error-500" element={<Error500 title="ERROR" />} />
             <Route path="*" element={<Navigate to="/error-404" />} />
           </Route>
         </Routes>
