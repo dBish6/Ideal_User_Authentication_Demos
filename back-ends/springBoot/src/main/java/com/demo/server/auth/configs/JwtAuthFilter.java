@@ -60,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 String isValid = jwtService.isTokenValid(jsonWebToken, userDetails);
-                if (Objects.equals(isValid, "valid")) {
+                if (Objects.equals(isValid, "valid.")) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -70,10 +70,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(req));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
-                    if (!Objects.equals(isValid, "valid.")) {
-                        sendResponse(res, "Token is " + isValid);
-                        return;
-                    }
+                    sendResponse(res, "Token is " + isValid);
+                    return;
                 }
             }
         }

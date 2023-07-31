@@ -66,6 +66,10 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/csrf", "/auth/register", "/auth/login").permitAll()
+                        .requestMatchers("/auth/**").authenticated()
                 );
 
         return http.build();
