@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class CheckSessionResponseDto {
+public class SingleMessageDto {
     private String message;
-    private String email;
 }

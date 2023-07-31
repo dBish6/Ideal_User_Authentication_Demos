@@ -1,5 +1,6 @@
 package com.demo.server.auth.services;
 
+import com.demo.server.auth.dtos.GetUserDto;
 import com.demo.server.auth.dtos.LoginRequest;
 import com.demo.server.auth.dtos.RegisterRequest;
 import com.demo.server.auth.model.*;
@@ -11,16 +12,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,37 +36,53 @@ public class AuthService {
     private final JwtService jwtService;
 
     public void register(RegisterRequest req) {
+        // TODO: Check if user is already in Redis.
         User user = User.builder()
-                .email(req.getEmail())
+                .email(req.getEmail().toLowerCase())
                 .displayName(req.getDisplayName())
-                .fullName(req.getFirstName() + " " + req.getLastName())
+                .fullName(req.getFullName())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .role(new Role(Role.ROLE_USER))
                 .build();
-        redisTemplate.opsForHash().put(KEY, user.getEmail(), user);
+        redisTemplate.opsForHash().put(KEY, user.getEmail().toLowerCase(), user);
     }
 
-    public ResponseCookie login(LoginRequest req) {
+    public Map<String, Object> login(LoginRequest req) {
         // Checks username and password.
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        req.getEmail(),
-                        req.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            req.getEmail().toLowerCase(),
+                            req.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException e) {
+            throw e; // Re-throw error to handle at the controller.
+        }
         // Load the user details and generate the JWT.
-        UserDetails userDetails = userDetailsService.loadUserByUsername(req.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(req.getEmail().toLowerCase());
         String jsonWebToken = jwtTokenProvider.generateToken(userDetails);
-        // String jsonWebToken = jwtTokenProvider.generateToken({password: userDetails.getPassword()}, userDetails);
         Date jwtExpiration = jwtService.extractExpiration(jsonWebToken);
 
-        return ResponseCookie.from("session", jsonWebToken)
-//                .path("/")
-                .maxAge(jwtExpiration.getTime()) // 3 days.
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
+        GetUserDto user = GetUserDto.builder()
+                .email(userDetails.getUsername())
+                .displayName(((User) userDetails).getDisplayName())
+                .fullName(((User) userDetails).getFullName())
                 .build();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("user", user);
+        response.put("cookie",
+                ResponseCookie.from("session", jsonWebToken)
+//                      .path("/")
+                        .maxAge(jwtExpiration.getTime()) // 3 days.
+                        .httpOnly(true)
+                        .secure(true)
+                        .sameSite("None")
+                        .build()
+        );
+
+        return response;
     }
 
     public List<User> getUsers() {
@@ -78,9 +94,17 @@ public class AuthService {
         return users;
     }
 
-    public UserDetails getUserDetails(String token) {
-        String username = jwtService.extractSubject(token);
-        return userDetailsService.loadUserByUsername(username);
+    public GetUserDto getUser(String email) {
+        User user = (User) redisTemplate.opsForHash().get(KEY, email.toLowerCase());
+        if (user != null) {
+            return GetUserDto.builder()
+                    .email(user.getUsername())
+                    .displayName(user.getDisplayName())
+                    .fullName(user.getFullName())
+                    .build();
+        }
+
+        return null;
     }
 
     public void deleteUser(String id) {

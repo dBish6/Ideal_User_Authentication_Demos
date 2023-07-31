@@ -1,18 +1,18 @@
 package com.demo.server.auth.controllers;
 
-import com.demo.server.auth.dtos.LoginRequest;
-import com.demo.server.auth.dtos.RegisterRequest;
+import com.demo.server.auth.dtos.*;
 import com.demo.server.auth.model.User;
 import com.demo.server.auth.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -26,41 +26,73 @@ public class AuthController {
         return authService.getUsers();
     }
 
-    @GetMapping("/user")
-    public UserDetails getUserDetails(@CookieValue(name = "session") String token) {
-        return authService.getUserDetails(token);
+    @GetMapping("/user/{email}")
+    public ResponseEntity<?> getUser(@PathVariable String email) {
+        GetUserDto user = authService.getUser(email);
+        if (user == null) {
+            SingleMessageDto errMsg = SingleMessageDto.builder()
+                    .message("User doesn't exist, incorrect email.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(errMsg);
+        }
+
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest req) {
+    public ResponseEntity<SingleMessageDto> registerUser(@RequestBody RegisterRequest req) {
         authService.register(req);
-        return ResponseEntity.ok("User was successfully registered.");
+
+        SingleMessageDto message = SingleMessageDto.builder()
+                .message("User was successfully registered.")
+                .build();
+        return ResponseEntity.ok(message);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> loginUser(@RequestBody LoginRequest req) {
-        ResponseCookie sessionCookie = authService.login(req);
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest req) {
+        try {
+            Map<String, Object> serviceMap = authService.login(req);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, String.valueOf(sessionCookie))
-                .body("User is successfully authenticated.");
+            LoginResponseDto responseDto = LoginResponseDto.builder()
+                    .message("User is successfully authenticated.")
+                    .user((GetUserDto) serviceMap.get("user"))
+                    .build();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, String.valueOf(serviceMap.get("cookie")))
+                    .body(responseDto);
+
+        } catch (BadCredentialsException e) {
+            SingleMessageDto errMsg = SingleMessageDto.builder()
+                    .message("Email or password is incorrect.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errMsg);
+        }
     }
 
     @PostMapping("/login/google")
     public ResponseEntity<Object> loginGoogleUser(@RequestBody LoginRequest req) {
-        // Get access token and create a JWT for a session.
+        // TODO: Get access token and create a JWT for a session.
         return null;
     }
 
-    // TODO: Use this if you can't get the JwtAuthFilter to only be applied to certain routes.
-//    @GetMapping("/persistSession")
-//    public String readCookie(@CookieValue(name = "session") String user) {
-//        return user;
-//    }
+    @GetMapping("/checkSession")
+    public ResponseEntity<LoginResponseDto> readCookie(@CookieValue(name = "session") String email) {
+        // Checks token from cookie in JwtAuthFilter.
+
+        GetUserDto user = authService.getUser(email);
+        LoginResponseDto responseDto = LoginResponseDto.builder()
+                .message("User is successfully authenticated.")
+                .user(user)
+                .build();
+
+        return ResponseEntity.ok(responseDto);
+    }
 
     @PostMapping("/logout")
     public ResponseEntity<Object> logoutUser(@RequestBody RegisterRequest req) {
-        // Clear Cookie
+        // TODO: Clear Cookie
         return null;
     }
 

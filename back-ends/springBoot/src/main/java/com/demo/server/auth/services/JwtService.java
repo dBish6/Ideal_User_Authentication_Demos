@@ -15,8 +15,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
     @Value("${JWT_SECRET}")
-    private static String JWT_SECRET;
-    
+    private String JWT_SECRET;
+
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
@@ -49,12 +49,11 @@ public class JwtService {
         final Date expiry = extractClaim(token, Claims::getExpiration);
 
         if (!username.equals(userDetails.getUsername())) {
-            return "missing or incorrect";
-        } else if (expiry.after(new Date())) {
-            return "expired";
+            return "incorrect.";
+        } else if (expiry.before(new Date())) {
+            return "expired.";
         } else {
-            return "valid";
+            return "valid.";
         }
-        // return (username.equals(userDetails.getUsername())) && expiry.before(new Date());
     }
 }
