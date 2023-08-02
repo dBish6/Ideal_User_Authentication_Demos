@@ -42,6 +42,7 @@
 
 .selectBox h3 {
   font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .sqrRadio,
@@ -67,4 +68,26 @@
 
 .sqrRadio.selected div {
   background-color: var(--isSelected);
+}
+
+.usersLink {
+  position: relative;
+  margin-top: 2rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--hTxt);
+  text-decoration: underline solid var(--hTxt);
+}
+
+.usersLink:hover,
+.usersLink:focus-visible,
+.usersLink:active,
+.usersLink.selected {
+  color: #141414;
+  text-decoration: underline solid #141414;
+}
+
+.usersLink:active,
+.usersLink.selected {
+  top: 1px;
 }

@@ -6,3 +6,8 @@ export type RegisterFormValues = {
   password: string;
   conPassword: string;
 };
+
+export type LoginFormValues = {
+  email: string;
+  password: string;
+};

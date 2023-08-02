@@ -1,9 +1,6 @@
 import { AxiosInstance } from "axios";
 
-export type RequestHandlerTypes = (
-  secure: boolean,
-  options?: object
-) => {
+export type RequestHandlerTypes = (options?: object) => {
   instance: AxiosInstance;
   abortController: AbortController;
 };

@@ -1,6 +1,6 @@
-import { CurrentUser } from "../CurrentUser";
+import { User } from "../User";
 
 export type AuthContextValues = {
-  currentUser: CurrentUser | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser | null>>;
+  currentUser: User | null;
+  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
 };

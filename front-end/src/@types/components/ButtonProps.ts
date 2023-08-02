@@ -4,5 +4,5 @@ export type ButtonProps = {
   alt?: string;
   isIconBtn?: boolean;
   style?: object;
-  onClick?: (() => void) | ((path?: string) => Window | null);
+  onClick?: () => void;
 };

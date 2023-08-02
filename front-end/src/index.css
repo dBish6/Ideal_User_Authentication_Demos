@@ -37,14 +37,6 @@ body {
   color: var(--txt);
 }
 
-.contentWrapper {
-  position: relative;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  height: 100vh;
-  padding-inline: 4rem;
-}
-
 :root {
   --black: #242424;
   --txt: #626262;
@@ -56,6 +48,14 @@ body {
   --medShad: 0 4px 6px rgba(0, 0, 0, 0.3);
   --larShad: 0 4px 12px rgba(0, 0, 0, 0.3);
   --larBtnShad: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.contentWrapper {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  padding-inline: 4rem;
 }
 
 main {
@@ -88,7 +88,22 @@ input {
   outline: none;
 }
 
-/* a {
-  color: var(--txt);
-  text-decoration: none;
-} */
+@media screen and (max-width: 1252px) {
+  .contentWrapper {
+    padding-inline: 2rem;
+  }
+}
+
+@media screen and (max-width: 494px) {
+  .contentWrapper {
+    padding-inline: 1rem;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  body,
+  button,
+  input {
+    font-size: 0.875rem;
+  }
+}

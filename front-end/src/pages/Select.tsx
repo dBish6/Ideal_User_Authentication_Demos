@@ -10,8 +10,8 @@ const Landing = ({ title }: PagesProps) => {
       <p
         style={{
           marginBottom: "3rem",
-          fontSize: "18px",
-          fontWeight: "500",
+          fontSize: "1.25rem",
+          fontWeight: "600",
           textAlign: "center",
           color: "#383838",
         }}

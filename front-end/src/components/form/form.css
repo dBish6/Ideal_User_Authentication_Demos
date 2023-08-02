@@ -35,24 +35,19 @@
   padding: 1rem 2rem 1rem 2rem;
 }
 
-/* .formWrapper .formContent:has(.title .loginHeading) {
+.formWrapper .formContent.login {
   padding-bottom: 2rem;
-} */
+}
 
 .formWrapper .formContent .title {
   display: grid;
   place-items: center;
-  /* transition: 0.5s ease-out all; */
 }
-
-/* .formContent h2,
-.formContent h4 {
-  text-align: center;
-} */
 
 .formWrapper .formContent .title h2 {
   position: relative;
   font-size: 2.25rem;
+  font-weight: 700;
   color: var(--g600);
   z-index: 1;
 }
@@ -73,7 +68,7 @@
   z-index: -1;
 }
 
-.formWrapper .formContent .title h4 {
+.formWrapper .formContent .title h5 {
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -135,10 +130,6 @@
   display: flex;
   gap: 1rem;
 }
-
-/* .formWrapper .formContent form button {
-  margin-top: -0.5rem;
-} */
 
 /* Below Form Fields */
 .formWrapper .formContent .orDivider {
@@ -209,4 +200,43 @@
 
 .formWrapper .formFooter p:active {
   top: 1px;
+}
+
+@media screen and (max-width: 420px) {
+  .formWrapper .formContent form .inputWrapper input {
+    height: 2.5rem;
+  }
+
+  .formWrapper .formContent form .inputWrapper input:focus + label,
+  .formWrapper
+    .formContent
+    form
+    .inputWrapper
+    input:not(:placeholder-shown)
+    + label {
+    font-size: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .formWrapper .formContent form .inputWrapper input {
+    height: 2.5rem;
+  }
+
+  .formWrapper .formContent form .inputWrapper input:focus + label,
+  .formWrapper
+    .formContent
+    form
+    .inputWrapper
+    input:not(:placeholder-shown)
+    + label {
+    font-size: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 362px) {
+  .formWrapper .formContent .thirdParty {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 }

@@ -1,4 +1,5 @@
-import { RegisterFormValues } from "../../@types/RegisterFormValues";
+import { RegisterFormValues } from "../../@types/components/FormValues";
+import { useRef } from "react";
 
 import { useForm } from "react-hook-form";
 
@@ -8,11 +9,12 @@ import Button from "../button";
 import PostRegister from "../../api_services/PostRegister";
 
 const Register = () => {
-  // TODO: Email already taken.
+  // TODO: Feedback.
   // TODO: Verify email.
   // TODO: View password.
 
-  const {
+  const formRef = useRef<HTMLFormElement>(null),
+    {
       register,
       formState: { errors },
       handleSubmit,
@@ -21,15 +23,23 @@ const Register = () => {
     } = useForm<RegisterFormValues>(),
     handleRegister = PostRegister(setError);
 
-  console.log(watch());
-
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit(() => {
-        console.log(watch());
-        handleRegister(watch());
+        console.log("Submitted", watch());
+        handleRegister(watch(), formRef);
       })}
     >
+      {errors.root && (
+        <p
+          className="fieldErr"
+          style={{ fontWeight: "500", textAlign: "center" }}
+        >
+          {errors.root.message}
+        </p>
+      )}
+
       <Input
         field="username"
         register={register}
@@ -44,7 +54,7 @@ const Register = () => {
             message: "You can make a better username than that...",
           },
         }}
-        error={errors.username}
+        errors={errors}
         placeholder=" "
       />
 
@@ -59,7 +69,7 @@ const Register = () => {
               message: "Max of 50 characters exceeded.",
             },
           }}
-          error={errors.firstName}
+          errors={errors}
           placeholder=" "
         />
         <Input
@@ -72,7 +82,7 @@ const Register = () => {
               message: "Max of 80 characters exceeded.",
             },
           }}
-          error={errors.lastName}
+          errors={errors}
           placeholder=" "
         />
       </div>
@@ -91,7 +101,7 @@ const Register = () => {
             message: "This can't be your actual email, holy crap!.",
           },
         }}
-        error={errors.email}
+        errors={errors}
         placeholder=" "
       />
 
@@ -109,7 +119,7 @@ const Register = () => {
             message: "Max of 128 characters exceeded.",
           },
         }}
-        error={errors.password}
+        errors={errors}
         placeholder=" "
         type="password"
       />
@@ -124,7 +134,7 @@ const Register = () => {
             message: "Max of 128 characters exceeded.",
           },
         }}
-        error={errors.conPassword}
+        errors={errors}
         placeholder=" "
         type="password"
       />

@@ -1,4 +1,5 @@
-import { LoginFormValues } from "../../@types/LoginFormValues";
+import { LoginFormValues } from "../../@types/components/FormValues";
+import { useRef } from "react";
 
 import { useForm } from "react-hook-form";
 
@@ -8,7 +9,8 @@ import Button from "../button";
 import PostLogin from "../../api_services/PostLogin";
 
 const Login = () => {
-  const {
+  const formRef = useRef<HTMLFormElement>(null),
+    {
       register,
       formState: { errors },
       handleSubmit,
@@ -20,11 +22,21 @@ const Login = () => {
   return (
     <form
       id="loginForm"
+      ref={formRef}
       onSubmit={handleSubmit(() => {
-        console.log(watch());
-        handleLogin(watch());
+        console.log("Submitted", watch());
+        handleLogin(watch(), formRef);
       })}
     >
+      {errors.root && (
+        <p
+          className="fieldErr"
+          style={{ fontWeight: "500", textAlign: "center" }}
+        >
+          {errors.root.message}
+        </p>
+      )}
+
       <Input
         field="email"
         register={register}
@@ -39,7 +51,7 @@ const Login = () => {
             message: "This can't be your actual email, holy crap!.",
           },
         }}
-        error={errors.email}
+        errors={errors}
         placeholder=" "
       />
 
@@ -47,9 +59,12 @@ const Login = () => {
         field="password"
         register={register}
         registerOptions={{ required: "Password is required." }}
-        error={errors.password}
+        errors={errors}
         placeholder=" "
+        // type="password"
       />
+
+      <Button text="Login" type="submit" />
     </form>
   );
 };

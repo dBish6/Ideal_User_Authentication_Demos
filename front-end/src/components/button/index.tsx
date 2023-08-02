@@ -1,4 +1,4 @@
-import { ButtonProps } from "../../@types/ButtonProps";
+import { ButtonProps } from "../../@types/components/ButtonProps";
 import { useRef } from "react";
 import "./button.css";
 import useKeyboardHelper from "../../hooks/useKeyboardHelper";

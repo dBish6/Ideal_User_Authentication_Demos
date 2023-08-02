@@ -1,17 +1,22 @@
 import { AuthContextValues } from "../@types/contexts/AuthContextValues";
-import { CurrentUser } from "../@types/CurrentUser";
+import { User } from "../@types/User";
 import { createContext, useState, useContext, useEffect } from "react";
+
+import GetSessionStatus from "../api_services/GetSessionStatus";
 
 const AuthContext = createContext<AuthContextValues | undefined>(undefined);
 
 export const AuthContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     console.log("currentUser", currentUser);
   }, [currentUser]);
+
+  // Persists the session on refreshes.
+  GetSessionStatus(setCurrentUser);
 
   return (
     <AuthContext.Provider

@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 
 import "./form.css";
-import swap from "../../assets/icons/Swap.svg";
+import springSwap from "../../assets/icons/SpringSwap.svg";
+import nodeSwap from "../../assets/icons/NodeSwap.svg";
 import googleLogo from "../../assets/icons/Google.svg";
 import githubLogo from "../../assets/icons/GitHub.svg";
 
@@ -9,6 +10,7 @@ import Register from "./Register";
 import Login from "./Login";
 import Button from "../button";
 
+import { useGlobalContext } from "../../contexts/GlobalContext";
 import useKeyboardHelper from "../../hooks/useKeyboardHelper";
 
 const Form = () => {
@@ -17,6 +19,7 @@ const Form = () => {
     havAccountRef = useRef<HTMLParagraphElement>(null),
     footerLink1Ref = useRef<HTMLParagraphElement>(null),
     footerLink2Ref = useRef<HTMLParagraphElement>(null),
+    { selectedBackEnd } = useGlobalContext(),
     handleKeyDown = useKeyboardHelper();
 
   return (
@@ -26,14 +29,17 @@ const Form = () => {
         onClick={() => setIsLogin(!isLogin)}
         onKeyDown={(e) => handleKeyDown(e, btnRef)}
       >
-        <img src={swap} alt="Toggle login Overlay" />
+        <img
+          src={selectedBackEnd === "spring" ? springSwap : nodeSwap}
+          alt="Toggle login Overlay"
+        />
       </button>
 
       {!isLogin ? (
         <div className="formContent">
           <div className="title">
             <h2>Register</h2>
-            <h4>Welcome to my Auth Demo</h4>
+            <h5>Welcome to my Auth Demo</h5>
             <hr aria-hidden="true" />
           </div>
 
@@ -63,9 +69,9 @@ const Form = () => {
           </p>
         </div>
       ) : (
-        <div className="formContent">
+        <div className="formContent login">
           <div className="title">
-            <h2 className="loginHeading">Login</h2>
+            <h2>Login</h2>
             {/* <h4>Welcome Back</h4> */}
             <hr aria-hidden="true" />
           </div>

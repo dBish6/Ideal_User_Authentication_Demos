@@ -1,15 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
-import requestHandler from "./AxiosInstance";
+import RequestHandler from "./AxiosInstance";
 
 const RefreshSession = () => {
-  const { instance, abortController } = requestHandler(false); // backEndType state?
+  const { instance, abortController } = RequestHandler();
 
   useEffect(() => {
-    instance({
-      method: "POST",
-      url: "/auth/refresh",
-    });
+    const handleRefresh = async () => {
+      // if (localStorage.getItem("loggedIn")) {
+      instance({
+        method: "POST",
+        url: "/auth/refresh",
+      });
+      // }
+    };
+    handleRefresh();
 
     return () => abortController.abort();
   }, []); // TODO: Is expired state?

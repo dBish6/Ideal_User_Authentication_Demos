@@ -7,8 +7,8 @@ export const GlobalContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
   const [selectedBackEnd, setSelectedBackEnd] = useState<
-    "spring" | "express"
-  >();
+    "spring" | "express" | null
+  >(localStorage.getItem("selectedBackEnd") as "spring" | "express" | null);
 
   useEffect(() => {
     console.log("selectedBackEnd", selectedBackEnd);

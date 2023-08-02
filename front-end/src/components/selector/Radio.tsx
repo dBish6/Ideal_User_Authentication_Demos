@@ -5,7 +5,7 @@ const Radio = ({
   isSelected,
   selectedBackEnd,
 }: {
-  selectedBackEnd?: "spring" | "express";
+  selectedBackEnd?: "spring" | "express" | null;
   isSelected: boolean;
 }) => {
   const radioRef = useRef<HTMLDivElement>(null);

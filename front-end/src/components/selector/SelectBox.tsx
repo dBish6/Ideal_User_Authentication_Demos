@@ -1,4 +1,4 @@
-import { SelectBoxProps } from "../../@types/SelectBoxProps";
+import { SelectBoxProps } from "../../@types/components/SelectBoxProps";
 import { useRef } from "react";
 import Radio from "./Radio";
 import useKeyboardHelper from "../../hooks/useKeyboardHelper";
@@ -20,9 +20,10 @@ const SelectBox = ({
       tabIndex={1}
       className={`selectBox ${isSelected ? "selected" : ""}`}
       ref={selectBoxRef}
-      onClick={() =>
-        setSelectedBackEnd(name.toLowerCase() as "spring" | "express")
-      }
+      onClick={() => {
+        setSelectedBackEnd(name.toLowerCase() as "spring" | "express");
+        localStorage.setItem("selectedBackEnd", name.toLowerCase());
+      }}
       onKeyDown={(e) =>
         handleKeyDown(e, selectBoxRef, setSelectedBackEnd, [
           name.toLowerCase() as "spring" | "express",

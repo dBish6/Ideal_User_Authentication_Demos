@@ -26,10 +26,12 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  padding: 6px;
   border: 1px solid var(--black);
+  font-weight: 600;
   background-color: var(--lvl2);
   transform: translateY(-4px);
-  transition: 0.2s ease-in-out transform;
+  transition: 0.15s ease-in-out transform;
 }
 
 .btnMain:hover .btnTop,
@@ -45,4 +47,10 @@
 
 .btnMain .btnTop p {
   color: var(--hTxt);
+}
+
+@media screen and (max-width: 420px) {
+  .btnMain {
+    height: 2.5rem;
+  }
 }
