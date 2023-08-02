@@ -1,6 +1,7 @@
 package com.demo.server.utils;
 
 import com.demo.server.exceptions.RedisConnectionException;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -10,14 +11,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class RedisConnectionLogger implements ApplicationListener<ContextRefreshedEvent> {
-
     private final RedisConnectionFactory redisConnectionFactory;
-
-    @Autowired
-    public RedisConnectionLogger(RedisConnectionFactory redisConnectionFactory) {
-        this.redisConnectionFactory = redisConnectionFactory;
-    }
 
     @Override
     public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {

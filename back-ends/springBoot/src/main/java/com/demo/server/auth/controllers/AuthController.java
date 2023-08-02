@@ -3,8 +3,8 @@ package com.demo.server.auth.controllers;
 import com.demo.server.auth.dtos.*;
 import com.demo.server.auth.model.User;
 import com.demo.server.auth.services.AuthService;
+import com.demo.server.auth.services.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,8 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    @Autowired
     private final AuthService authService;
+    private final JwtService jwtService;
 
     @GetMapping("/users")
     public List<User> getUsers() {
@@ -33,7 +33,7 @@ public class AuthController {
             SingleMessageDto errMsg = SingleMessageDto.builder()
                     .message("User doesn't exist, incorrect email.")
                     .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(errMsg);
         }
 
@@ -42,12 +42,24 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<SingleMessageDto> registerUser(@RequestBody RegisterRequest req) {
-        authService.register(req);
+        HttpStatus status;
+        String message;
 
-        SingleMessageDto message = SingleMessageDto.builder()
-                .message("User was successfully registered.")
+        boolean exists = authService.userAlreadyExist(req);
+        if (exists) {
+            status = HttpStatus.BAD_REQUEST;
+            message = "User already exists." ;
+        } else {
+            authService.register(req);
+            status = HttpStatus.OK;
+            message = "User was successfully registered." ;
+        }
+
+        SingleMessageDto messageDto = SingleMessageDto.builder()
+                .message(message)
                 .build();
-        return ResponseEntity.ok(message);
+        return ResponseEntity.status(status)
+                .body(messageDto);
     }
 
     @PostMapping("/login")
@@ -78,15 +90,23 @@ public class AuthController {
     }
 
     @GetMapping("/checkSession")
-    public ResponseEntity<LoginResponseDto> readCookie(@CookieValue(name = "session") String email) {
-        // Checks token from cookie in JwtAuthFilter.
+    public ResponseEntity<?> readCookie(@CookieValue("session") String email) {
+        // Checks token from cookie in JwtAuthFilter...
 
-        GetUserDto user = authService.getUser(email);
+        String subject = jwtService.extractSubject(email);
+        GetUserDto user = authService.getUser(subject);
+        if (user == null) {
+            SingleMessageDto errMsg = SingleMessageDto.builder()
+                    .message("User doesn't exist, incorrect email within cookie.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(errMsg);
+        }
+
         LoginResponseDto responseDto = LoginResponseDto.builder()
                 .message("User is successfully authenticated.")
                 .user(user)
                 .build();
-
         return ResponseEntity.ok(responseDto);
     }
 

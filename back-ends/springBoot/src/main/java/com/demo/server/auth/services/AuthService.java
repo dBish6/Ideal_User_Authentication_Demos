@@ -6,7 +6,6 @@ import com.demo.server.auth.dtos.RegisterRequest;
 import com.demo.server.auth.model.*;
 import com.demo.server.auth.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseCookie;
@@ -25,7 +24,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    @Autowired
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String KEY = "springUsers";
 
@@ -36,7 +34,6 @@ public class AuthService {
     private final JwtService jwtService;
 
     public void register(RegisterRequest req) {
-        // TODO: Check if user is already in Redis.
         User user = User.builder()
                 .email(req.getEmail().toLowerCase())
                 .displayName(req.getDisplayName())
@@ -45,6 +42,10 @@ public class AuthService {
                 .role(new Role(Role.ROLE_USER))
                 .build();
         redisTemplate.opsForHash().put(KEY, user.getEmail().toLowerCase(), user);
+    }
+
+    public boolean userAlreadyExist(RegisterRequest req) {
+        return redisTemplate.opsForHash().hasKey(KEY, req.getEmail().toLowerCase());
     }
 
     public Map<String, Object> login(LoginRequest req) {
@@ -74,7 +75,6 @@ public class AuthService {
         response.put("user", user);
         response.put("cookie",
                 ResponseCookie.from("session", jsonWebToken)
-//                      .path("/")
                         .maxAge(jwtExpiration.getTime()) // 3 days.
                         .httpOnly(true)
                         .secure(true)

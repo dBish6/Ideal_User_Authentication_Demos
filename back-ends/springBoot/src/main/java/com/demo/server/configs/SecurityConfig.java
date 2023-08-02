@@ -1,6 +1,7 @@
 package com.demo.server.configs;
 
 import com.demo.server.auth.configs.JwtAuthFilter;
+import com.demo.server.csrf.configs.CsrfConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
@@ -26,6 +24,7 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final AuthenticationProvider jwtTokenProvider;
     private final JwtAuthFilter jwtAuthFilter;
+    private final CsrfConfig csrfConfig;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,21 +53,14 @@ public class SecurityConfig {
             cors.configurationSource(req -> config);
         });
 
-        // I assigned only methods that really only need a CSRF token, which are methods that modify data.
-        AntPathRequestMatcher postMatcher = new AntPathRequestMatcher("/api/auth/**", HttpMethod.POST.toString());
-        AntPathRequestMatcher deleteMatcher = new AntPathRequestMatcher("/api/auth/**", HttpMethod.DELETE.toString());
-        OrRequestMatcher csrfRequestMatcher = new OrRequestMatcher(postMatcher, deleteMatcher);
-        http.csrf((csrf) ->
-            csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .requireCsrfProtectionMatcher(csrfRequestMatcher)
-        );
+        csrfConfig.configureCsrf(http);
         http.authenticationProvider(jwtTokenProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/csrf", "/auth/register", "/auth/login").permitAll()
+                        .requestMatchers("/csrf/**", "/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/auth/**").authenticated()
                 );
 
