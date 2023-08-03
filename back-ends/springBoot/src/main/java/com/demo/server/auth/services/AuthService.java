@@ -44,10 +44,6 @@ public class AuthService {
         redisTemplate.opsForHash().put(KEY, user.getEmail().toLowerCase(), user);
     }
 
-    public boolean userAlreadyExist(RegisterRequest req) {
-        return redisTemplate.opsForHash().hasKey(KEY, req.getEmail().toLowerCase());
-    }
-
     public Map<String, Object> login(LoginRequest req) {
         // Checks username and password.
         try {

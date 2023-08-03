@@ -45,8 +45,8 @@ public class AuthController {
         HttpStatus status;
         String message;
 
-        boolean exists = authService.userAlreadyExist(req);
-        if (exists) {
+        GetUserDto user = authService.getUser(req.getEmail());
+        if (user != null) {
             status = HttpStatus.BAD_REQUEST;
             message = "User already exists." ;
         } else {

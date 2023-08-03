@@ -1,9 +1,11 @@
 package com.demo.server.csrf.configs;
 
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
@@ -15,8 +17,16 @@ public class CsrfConfig {
         AntPathRequestMatcher postMatcher = new AntPathRequestMatcher("/api/auth/**", HttpMethod.POST.toString());
         AntPathRequestMatcher deleteMatcher = new AntPathRequestMatcher("/api/auth/**", HttpMethod.DELETE.toString());
         OrRequestMatcher csrfRequestMatcher = new OrRequestMatcher(postMatcher, deleteMatcher);
+
+        final CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
+        csrfTokenRepository.setCookieCustomizer((config) ->
+                config.httpOnly(true)
+                        .secure(true)
+                        .sameSite(Cookie.SameSite.NONE.attributeValue())
+        );
+
         http.csrf((csrf) ->
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                csrf.csrfTokenRepository(csrfTokenRepository)
                         .requireCsrfProtectionMatcher(csrfRequestMatcher)
         );
     }

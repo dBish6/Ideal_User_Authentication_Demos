@@ -1,4 +1,4 @@
-package com.demo.server.auth.configs;
+package com.demo.server.auth.utils;
 
 import com.demo.server.auth.services.JwtService;
 import jakarta.servlet.FilterChain;
@@ -80,7 +80,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private void sendResponse(HttpServletResponse res, String message) throws IOException {
         res.setContentType("application/json");
-        res.setStatus(HttpStatus.UNAUTHORIZED.value());
+        if (message.contains("missing")) {
+            res.setStatus(HttpStatus.UNAUTHORIZED.value());
+        } else {
+            res.setStatus(HttpStatus.FORBIDDEN.value());
+        }
         res.getWriter().write("{\"message\": \"" + message + "\"}");
     }
 }
