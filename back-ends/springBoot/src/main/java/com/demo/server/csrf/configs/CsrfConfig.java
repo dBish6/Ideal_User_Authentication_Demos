@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
@@ -20,9 +19,10 @@ public class CsrfConfig {
 
         final CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
         csrfTokenRepository.setCookieCustomizer((config) ->
-                config.httpOnly(true)
+                config.path("/")
+                        .httpOnly(true)
                         .secure(true)
-                        .sameSite(Cookie.SameSite.NONE.attributeValue())
+                        .sameSite(Cookie.SameSite.STRICT.attributeValue())
         );
 
         http.csrf((csrf) ->

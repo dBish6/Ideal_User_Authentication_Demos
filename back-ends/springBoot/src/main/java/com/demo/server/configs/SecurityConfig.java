@@ -1,6 +1,6 @@
 package com.demo.server.configs;
 
-import com.demo.server.auth.configs.JwtAuthFilter;
+import com.demo.server.auth.utils.JwtAuthFilter;
 import com.demo.server.csrf.configs.CsrfConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/csrf/**", "/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/auth/**").authenticated()
+                        // .anyRequest().permitAll()
                 );
 
         return http.build();
