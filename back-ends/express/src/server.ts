@@ -15,13 +15,18 @@ import cors from "cors";
 import helmet from "helmet";
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
+import morgan from "morgan";
 
-import authRouter from "./authentication/routes/authRoute";
+import lowercaseEmails from "./middleware/lowercaseEmails";
+
+import authRouter from "./features/authentication/routes/authRoute";
+import csrfRouter from "./features/csrf/routes/csrfRoute";
 
 const app = express();
 dotenv.config();
 
-const PORT = Number(process.env.PORT);
+const PORT = Number(process.env.PORT),
+  baseUrl = "/express/api";
 
 (async () => {
   await redisClient.connect();
@@ -53,8 +58,25 @@ app.use((req, res, next) => {
   })(req, res, next);
 });
 
+app.use(morgan("dev")); // Request logger.
+// app.use((req, res, next) => {
+//   console.log(
+//     req.method,
+//     req.url,
+//     req.hostname,
+//     req.cookies,
+//     req.headers,
+//     req.body,
+//     req.query
+//   );
+//   next();
+// });
+
+app.use(lowercaseEmails);
+
 // *Router*
-app.use("/api/auth", authRouter);
+app.use(`${baseUrl}/auth`, authRouter);
+app.use(`${baseUrl}/csrf`, csrfRouter);
 
 app.listen(PORT, "localhost", () =>
   console.log(

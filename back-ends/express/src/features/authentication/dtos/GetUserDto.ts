@@ -1,6 +1,5 @@
-export default interface User {
+export default interface GetUserDto {
   email: string;
   displayName: string;
   fullName: string;
-  password: string;
 }

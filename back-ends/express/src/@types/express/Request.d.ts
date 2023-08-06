@@ -1,8 +1,10 @@
 import { Request } from "express";
-import jwt from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
+import User from "../../model/User";
 
 declare module "express-serve-static-core" {
   interface Request {
-    decodedClaims?: jwt.JwtPayload;
+    decodedClaims?: JwtPayload;
+    authUser?: User;
   }
 }

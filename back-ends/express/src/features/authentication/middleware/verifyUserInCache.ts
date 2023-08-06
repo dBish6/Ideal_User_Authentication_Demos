@@ -1,5 +1,6 @@
-import User from "../../model/User";
 import { Request, Response, NextFunction } from "express";
+import User from "../../../model/User";
+
 import { compare } from "bcrypt";
 import { getUser } from "../services/authService";
 
@@ -9,23 +10,23 @@ const verifyUserInCache = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { email, password } = req.body;
+  const { email, password }: { email: string; password: string } = req.body;
   try {
-    const userData = await getUser(email);
-    console.log("userData verify", userData);
-
-    if (!userData) {
+    const user = (await getUser(email, true)) as User;
+    if (!user) {
       return res.status(400).send({
         message: "User doesn't exist, incorrect email.",
       });
     }
-    const user: User = JSON.parse(userData);
 
     if (!(await compare(password, user.password))) {
       return res.status(400).send({
         message: "Incorrect password.",
       });
     }
+
+    console.log("User successfully verified.");
+    req.authUser = user;
     next();
   } catch (error) {
     console.error(error);
