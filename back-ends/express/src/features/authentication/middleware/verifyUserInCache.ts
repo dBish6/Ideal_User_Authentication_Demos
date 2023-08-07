@@ -15,7 +15,7 @@ const verifyUserInCache = async (
     const user = (await getUser(email, true)) as User;
     if (!user) {
       return res.status(400).send({
-        message: "User doesn't exist, incorrect email.",
+        message: "Incorrect email.",
       });
     }
 

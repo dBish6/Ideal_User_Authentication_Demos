@@ -15,6 +15,6 @@ router.post("/login", verifyCsrfToken, verifyUserInCache, authController.login);
 // router.post("/login/google", authController);
 router.get("/checkSession", verifyTokens.verifyAccessToken, authController.checkSession);
 router.post("/refresh", verifyCsrfToken, verifyTokens.verifyRefreshToken, authController.refresh);
-router.post("/logout", verifyCsrfToken, verifyTokens.verifyAccessToken, authController.logout);
+router.post("/logout", verifyCsrfToken, authController.logout);
 
 export default router;

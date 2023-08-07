@@ -28,7 +28,7 @@ export const getUser = async (
   try {
     const user = await authService.getUser(req.params.email);
     if (!user)
-      return res.status(400).send({
+      return res.status(404).send({
         message: "User doesn't exist, incorrect email.",
       });
 
@@ -91,7 +91,34 @@ export const login = async (
       user: req.authUser, // authUser was attached to the request object in verifyUserInCache.
     });
   } catch (error: any) {
-    error.reason = "failed to create login session.";
+    error.reason = "failed to create user session.";
+    next(error);
+  }
+};
+
+export const checkSession = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // Just verifies access token...
+    console.log("req.decodedClaims", req.decodedClaims);
+    const user = await authService.getUser(req.decodedClaims!.sub!);
+    console.log("user", user);
+    if (!user)
+      return res.status(404).send({
+        message: "User doesn't exist, incorrect subject in cookie.",
+      });
+
+    return res
+      .status(200)
+      .json({
+        message: "Session status was successfully checked.",
+        user: user,
+      });
+  } catch (error: any) {
+    error.reason = "failed to check user session status.";
     next(error);
   }
 };
@@ -101,20 +128,19 @@ export const refresh = async (
   res: Response,
   next: NextFunction
 ) => {
-  const email = req.decodedClaims!.sub!; // refresh token's subject; the email.
-
   try {
     // When the refresh token is verified generate the new access token.
 
-    const user = await authService.getUser(email);
+    console.log("req.decodedClaims", req.decodedClaims);
+    const user = await authService.getUser(req.decodedClaims!.sub!);
     if (!user)
-      return res.status(400).send({
-        message: "User doesn't exist, incorrect email.",
+      return res.status(404).send({
+        message: "User doesn't exist, incorrect subject in cookie.",
       });
 
     const generateJWT = new jwtService.GenerateJWT(),
-      accessToken = generateJWT.accessToken(email),
-      refreshToken = generateJWT.refreshToken(email);
+      accessToken = generateJWT.accessToken(user.email),
+      refreshToken = generateJWT.refreshToken(user.email);
 
     res // Create cookies again.
       .cookie("session", accessToken, {
@@ -134,32 +160,7 @@ export const refresh = async (
       user: user,
     });
   } catch (error: any) {
-    error.reason = "failed to refresh login session.";
-    next(error);
-  }
-};
-
-export const checkSession = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    // Just verifies access token...
-    console.log("req.decodedClaims", req.decodedClaims);
-    const user = await authService.getUser(req.decodedClaims!.sub!);
-    console.log("user", user);
-    if (!user)
-      return res.status(400).send({
-        message: "User doesn't exist, incorrect email.",
-        user: user,
-      });
-
-    return res
-      .status(200)
-      .json({ message: "Session status was successfully checked." });
-  } catch (error: any) {
-    error.reason = "failed to check login session status.";
+    error.reason = "failed to refresh user session.";
     next(error);
   }
 };
@@ -170,8 +171,12 @@ export const logout = async (
   next: NextFunction
 ) => {
   try {
-    // Clear Cookie
-  } catch (error) {
+    res.clearCookie("session").clearCookie("refresh");
+    return res
+      .status(200)
+      .json({ message: "User session cookies cleared, log out successful." });
+  } catch (error: any) {
+    error.reason = "failed to clear user session.";
     next(error);
   }
 };
