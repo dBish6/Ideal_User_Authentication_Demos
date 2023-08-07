@@ -1,24 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import RequestHandler from "./AxiosInstance";
+import { useGlobalContext } from "../contexts/GlobalContext";
 
 const GetInitializeCsrfToken = () => {
-  const { instance, abortController } = RequestHandler();
+  const { instance, abortController } = RequestHandler(),
+    { selectedBackEnd } = useGlobalContext();
 
   useEffect(() => {
     const handleCsrf = async () => {
-      // if (!sessionStorage.getItem("_csrf")) {
-      // !document.cookie.match(/^(.*;)?\s*XSRF-TOKEN\s*=\s*[^;]+(.*)?$/)
-      // !document.cookie.match(/XSRF-TOKEN=([^;]+)/)
       const res = await instance({
         method: "GET",
         url: "/csrf/init",
       });
       if (res && res.status === 200) {
-        // if (res.data.token) sessionStorage.setItem("_csrf", res.data.token); // This token in the body isn't actually the csrf token, it's encrypted. So, it is safe to store it in sessionStorage.
-        console.log("csrfTokenEncrypted", res.data.token);
+        if (selectedBackEnd === "express") {
+          sessionStorage.getItem("csrf") && sessionStorage.removeItem("csrf");
+          sessionStorage.setItem("csrf", res.data.token); // This is a hashed csrf token, so it is safe to store it in localStorage.
+        }
+        console.log("csrfTokenHashed", res.data.token);
       }
-      // }
     };
     handleCsrf();
 

@@ -19,15 +19,15 @@ header .nodeLogo {
   min-height: 104px;
 }
 
-header h1,
+header .title,
 header h2 {
   flex: 1;
-  font-weight: 400;
-  font-style: italic;
 }
 
-header h1 {
+header .title h1 {
   font-size: clamp(1.25rem, 0.9924892703862661rem + 1.2875536480686696vw, 2rem);
+  font-weight: 400;
+  font-style: italic;
 }
 
 header h2 {
@@ -50,7 +50,7 @@ header h2 span {
   header {
     justify-content: center;
   }
-  header h1 {
+  header .title {
     display: none;
   }
 }

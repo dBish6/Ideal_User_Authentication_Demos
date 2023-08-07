@@ -87,14 +87,19 @@
 
 .formWrapper .formContent form .inputWrapper {
   position: relative;
+  width: 100%;
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid var(--black);
+  background-color: var(--lvl2);
 }
 
 .formWrapper .formContent form .inputWrapper input {
   width: 100%;
   height: 48px;
   padding-inline: 1rem;
-  border: 1px solid var(--black);
-  background-color: var(--lvl2);
+  background-color: transparent;
 }
 
 .formWrapper .formContent form .inputWrapper label {
@@ -131,6 +136,27 @@
   gap: 1rem;
 }
 
+.formWrapper .formContent form .inputWrapper .passwordBtn {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding-inline: 1rem;
+  background-color: transparent;
+  cursor: pointer;
+  transition: 0.2s ease-in-out background-color;
+}
+
+.formWrapper .formContent form .inputWrapper .passwordBtn:hover,
+.formWrapper .formContent form .inputWrapper .passwordBtn:active,
+.formWrapper .formContent form .inputWrapper .passwordBtn:focus-visible {
+  background-color: var(--hover);
+}
+
+.formWrapper .formContent form .inputWrapper .passwordBtn:active,
+.formWrapper .formContent form .inputWrapper .passwordBtn.selected {
+  background-color: var(--active);
+}
+
 /* Below Form Fields */
 .formWrapper .formContent .orDivider {
   display: flex;
@@ -160,6 +186,7 @@
   text-decoration: underline solid var(--g400);
   text-align: center;
   cursor: pointer;
+  transition: 0.2s ease-in-out background-color text-decoration-color;
 }
 
 .formWrapper .formContent > p:hover,
@@ -219,7 +246,7 @@
 }
 
 @media screen and (max-width: 420px) {
-  .formWrapper .formContent form .inputWrapper input {
+  .formWrapper .formContent form .inputWrapper {
     height: 2.5rem;
   }
 
@@ -231,6 +258,11 @@
     input:not(:placeholder-shown)
     + label {
     font-size: 0.75rem;
+  }
+
+  .formWrapper .formContent form .inputWrapper .passwordBtn img {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 }
 

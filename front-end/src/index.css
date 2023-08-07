@@ -43,6 +43,7 @@ body {
   --hTxt: #363636;
   --lvl1: rgba(242, 242, 242, 0.7);
   --lvl2: #f2f2f2;
+  --hover: #ebebeb;
   --active: #d6d6d6;
 
   --medShad: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -86,6 +87,10 @@ input {
   font-size: 1rem;
   color: var(--txt);
   outline: none;
+}
+
+a {
+  text-decoration: none;
 }
 
 @media screen and (max-width: 1252px) {

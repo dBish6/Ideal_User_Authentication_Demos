@@ -61,7 +61,6 @@ const Login = () => {
         registerOptions={{ required: "Password is required." }}
         errors={errors}
         placeholder=" "
-        // type="password"
       />
 
       <Button text="Login" type="submit" />

@@ -1,6 +1,7 @@
-import { User } from "../User";
+import { CurrentUser } from "../CurrentUser";
 
 export type AuthContextValues = {
-  currentUser: User | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
+  currentUser: CurrentUser;
+  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser>>;
+  logOutUser: () => Promise<void>;
 };

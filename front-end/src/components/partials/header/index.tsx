@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import "./header.css";
 
 import SpringLogo from "../../../assets/SpringLogo.png";
@@ -11,7 +11,9 @@ const Header = () => {
 
   return (
     <header>
-      <h1>User Authentication Demo</h1>
+      <Link to="/select" className="title">
+        <h1>User Authentication Demo</h1>
+      </Link>
       {location.pathname !== "/select" && selectedBackEnd && (
         <img
           src={selectedBackEnd === "spring" ? SpringLogo : NodeLogo}

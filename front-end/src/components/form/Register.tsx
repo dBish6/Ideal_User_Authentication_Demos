@@ -11,7 +11,7 @@ import PostRegister from "../../api_services/PostRegister";
 const Register = () => {
   // TODO: Feedback.
   // TODO: Verify email.
-  // TODO: View password.
+  // TODO: loading.
 
   const formRef = useRef<HTMLFormElement>(null),
     {
@@ -121,7 +121,6 @@ const Register = () => {
         }}
         errors={errors}
         placeholder=" "
-        type="password"
       />
 
       <Input
@@ -136,7 +135,6 @@ const Register = () => {
         }}
         errors={errors}
         placeholder=" "
-        type="password"
       />
 
       <Button text="Register" type="submit" />

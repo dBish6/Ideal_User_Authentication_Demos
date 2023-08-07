@@ -7,7 +7,9 @@ const UsersTable = ({ users }: { users: User[] }) => {
 
   return (
     <table>
-      <caption>
+      <caption
+        {...(selectedBackEnd === "express" && { className: "isExpress" })}
+      >
         {selectedBackEnd === "spring" ? "Spring" : "Express"} Users
       </caption>
       <thead>

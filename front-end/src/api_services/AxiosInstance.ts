@@ -1,5 +1,5 @@
-import { RequestHandlerTypes } from "../@types/RequestHandlerTypes";
-import { AxiosErrorResponse } from "../@types/AxiosErrorResponse";
+import { RequestHandlerTypes } from "../@types/api_services/RequestHandlerTypes";
+import { AxiosErrorResponse } from "../@types/api_services/AxiosErrorResponse";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 
@@ -13,11 +13,24 @@ const RequestHandler: RequestHandlerTypes = (options) => {
   const abortController = new AbortController(),
     instance = axios.create({
       baseURL: selectedBackEnd === "spring" ? springUrl : expressUrl,
-      timeout: 3000,
+      timeout: 10000, // 3000
       withCredentials: true,
       signal: abortController.signal,
       ...options,
     });
+
+  // This happens before each request.
+  instance.interceptors.request.use(
+    (config) => {
+      if (selectedBackEnd === "express" && sessionStorage.getItem("csrf"))
+        config.headers["X-XSRF-TOKEN"] = sessionStorage.getItem("csrf");
+
+      return config;
+    },
+    (error) => {
+      console.error("Request error", error);
+    }
+  );
 
   instance.interceptors.response.use(
     (response) => {
@@ -28,23 +41,35 @@ const RequestHandler: RequestHandlerTypes = (options) => {
       abortController.abort();
 
       if (error.response) {
+        const errorMessage = error.response.data.message;
         if (error.response.status === 400) {
-          const errorMessage = error.response.data.message;
+          // Bad Request Messages
           if (
             errorMessage === "Email or password is incorrect." ||
-            errorMessage === "User already exists."
+            errorMessage === "Incorrect email." ||
+            errorMessage === "Incorrect password."
           ) {
             throw errorMessage;
           }
         } else if (error.response.status === 401) {
-          if (error.response.data.message === "Token is expired.") {
-            // TODO: Add to state?
-          }
+          // Authorization Needed
           navigate("/error-401");
         } else if (error.response.status === 403) {
-          navigate("/error-403");
-        } else if (error.response.status === 404) {
-          // navigate("/error-404"); // TODO: ?
+          // Forbidden Messages
+          // TODO: "Token is expired." is still in spring.
+          if (errorMessage === "Access token is expired.") {
+            throw errorMessage;
+          } else if (errorMessage.startsWith("CSRF token")) {
+            navigate("/error-403");
+            throw errorMessage;
+          } else {
+            navigate("/error-403");
+          }
+        } else if (
+          error.response.status === 404 &&
+          errorMessage.includes("incorrect subject")
+        ) {
+          navigate("/error500");
         } else if (
           error.response.status === 500 ||
           error.code === "NETWORK ERROR" // FIXME: ?
@@ -59,7 +84,7 @@ const RequestHandler: RequestHandlerTypes = (options) => {
         throw new Error("A un-handled unexpected server error occurred.");
       }
 
-      // console.error(error);
+      console.error("Response error", error);
     }
   );
 

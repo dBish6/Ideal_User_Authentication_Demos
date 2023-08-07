@@ -1,28 +1,45 @@
 import { AuthContextValues } from "../@types/contexts/AuthContextValues";
-import { User } from "../@types/User";
+import { CurrentUser } from "../@types/CurrentUser";
 import { createContext, useState, useContext, useEffect } from "react";
 
 import GetSessionStatus from "../api_services/GetSessionStatus";
+import PostSessionRefresh from "../api_services/PostSessionRefresh";
+import PostLogout from "../api_services/PostLogout";
 
 const AuthContext = createContext<AuthContextValues | undefined>(undefined);
 
 export const AuthContextProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({
+      user: null,
+      sessionStatus: localStorage.getItem("loggedIn") ? true : null,
+    }),
+    handleLogout = PostLogout();
 
   useEffect(() => {
     console.log("currentUser", currentUser);
   }, [currentUser]);
 
+  const logOutUser = async () => {
+    const res = await handleLogout();
+    if (res && res.status === 200) {
+      setCurrentUser({ user: null, sessionStatus: null });
+      localStorage.removeItem("loggedIn");
+    }
+  };
+
   // Persists the session on refreshes.
-  GetSessionStatus(setCurrentUser);
+  GetSessionStatus(currentUser, setCurrentUser, logOutUser);
+  // Refreshes user session in the background if access token is expired.
+  PostSessionRefresh(currentUser, setCurrentUser, logOutUser);
 
   return (
     <AuthContext.Provider
       value={{
         currentUser,
         setCurrentUser,
+        logOutUser,
       }}
     >
       {children}

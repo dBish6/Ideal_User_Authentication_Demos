@@ -10,7 +10,7 @@ const Error403 = ({ title }: PagesProps) => {
       <h2>
         <span>Error 403</span>: Forbidden
       </h2>
-      <h3>User Authorization is Not Valid or Expired</h3>
+      <h3>User Authorization or CSRF is Not Valid or Expired</h3>
     </div>
   );
 };

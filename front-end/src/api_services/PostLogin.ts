@@ -22,13 +22,23 @@ const PostLogin = (setError: UseFormSetError<LoginFormValues>) => {
       });
       if (res && res.status === 200) {
         formRef.current!.reset();
-        setCurrentUser(res.data.user);
+        setCurrentUser({ user: res.data.user, sessionStatus: true });
         localStorage.setItem("loggedIn", res.data.user.displayName);
         navigate("/users");
       }
     } catch (error: any) {
-      if (error.includes("incorrect")) {
+      if (error.includes("Email or password")) {
         setError("root", {
+          type: "manual",
+          message: error,
+        });
+      } else if (error.includes("email")) {
+        setError("email", {
+          type: "manual",
+          message: error,
+        });
+      } else if (error.includes("password")) {
+        setError("password", {
           type: "manual",
           message: error,
         });

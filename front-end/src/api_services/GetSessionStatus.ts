@@ -1,24 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { User } from "../@types/User";
+import { CurrentUser } from "../@types/CurrentUser";
 import { useEffect } from "react";
 import RequestHandler from "./AxiosInstance";
 import { useGlobalContext } from "../contexts/GlobalContext";
 
 const GetSessionStatus = (
-  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>
+  currentUser: CurrentUser,
+  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser>>,
+  logOutUser: () => Promise<void>
 ) => {
   const { instance, abortController } = RequestHandler(),
     { selectedBackEnd } = useGlobalContext();
 
   useEffect(() => {
     const handleCheck = async () => {
-      if (localStorage.getItem("loggedIn") && selectedBackEnd) {
-        const res = await instance({
-          method: "GET",
-          url: "/auth/checkSession",
-        });
-        if (res && res.status === 200) {
-          setCurrentUser(res.data.user);
+      if (currentUser.sessionStatus === true && selectedBackEnd) {
+        try {
+          const res = await instance({
+            method: "GET",
+            url: "/auth/checkSession",
+          });
+          if (res && res.status === 200)
+            setCurrentUser({ user: res.data.user, sessionStatus: true });
+        } catch (error: any) {
+          if (error.includes("expired")) {
+            setCurrentUser((prev) => ({ ...prev, sessionStatus: false }));
+          } else {
+            // Even when a error happens get this user out of here.
+            if (!error.includes("CSRF") && localStorage.getItem("loggedIn"))
+              await logOutUser();
+          }
         }
       }
     };
