@@ -1,0 +1,17 @@
+.spinner {
+  border: solid 3px #9c9c9c;
+  border-top: solid 3px var(--g600);
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: rotation 1.2s infinite cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

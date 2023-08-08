@@ -15,11 +15,17 @@ import useKeyboardHelper from "../../hooks/useKeyboardHelper";
 
 const Form = () => {
   const [isLogin, setIsLogin] = useState(false),
-    btnRef = useRef<HTMLButtonElement>(null),
+    [loading, toggleLoading] = useState({
+      register: false,
+      login: false,
+    });
+
+  const btnRef = useRef<HTMLButtonElement>(null),
     havAccountRef = useRef<HTMLParagraphElement>(null),
     footerLink1Ref = useRef<HTMLParagraphElement>(null),
-    footerLink2Ref = useRef<HTMLParagraphElement>(null),
-    { selectedBackEnd } = useGlobalContext(),
+    footerLink2Ref = useRef<HTMLParagraphElement>(null);
+
+  const { selectedBackEnd } = useGlobalContext(),
     handleKeyDown = useKeyboardHelper();
 
   return (
@@ -43,7 +49,7 @@ const Form = () => {
             <hr aria-hidden="true" />
           </div>
 
-          <Register />
+          <Register loading={loading} toggleLoading={toggleLoading} />
           <div role="presentation" className="orDivider">
             <hr aria-hidden="true" />
             <p>Or</p>
@@ -72,11 +78,10 @@ const Form = () => {
         <div className="formContent login">
           <div className="title">
             <h2>Login</h2>
-            {/* <h4>Welcome Back</h4> */}
             <hr aria-hidden="true" />
           </div>
 
-          <Login />
+          <Login loading={loading} toggleLoading={toggleLoading} />
         </div>
       )}
 

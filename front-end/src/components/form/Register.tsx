@@ -1,6 +1,7 @@
+import { FormProps } from "../../@types/components/FormProps";
 import { RegisterFormValues } from "../../@types/components/FormValues";
-import { useRef } from "react";
 
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 
 import Input from "./Input";
@@ -8,10 +9,9 @@ import Button from "../button";
 
 import PostRegister from "../../api_services/PostRegister";
 
-const Register = () => {
+const Register = ({ loading, toggleLoading }: FormProps) => {
   // TODO: Feedback.
   // TODO: Verify email.
-  // TODO: loading.
 
   const formRef = useRef<HTMLFormElement>(null),
     {
@@ -27,8 +27,12 @@ const Register = () => {
     <form
       ref={formRef}
       onSubmit={handleSubmit(() => {
+        toggleLoading({ ...loading, register: true });
         console.log("Submitted", watch());
-        handleRegister(watch(), formRef);
+        handleRegister(watch(), formRef).finally(() => {
+          console.log("finally");
+          toggleLoading({ ...loading, register: false });
+        });
       })}
     >
       {errors.root && (
@@ -137,7 +141,7 @@ const Register = () => {
         placeholder=" "
       />
 
-      <Button text="Register" type="submit" />
+      <Button text="Register" type="submit" isLoading={loading.register} />
     </form>
   );
 };

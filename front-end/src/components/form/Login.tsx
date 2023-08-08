@@ -1,6 +1,7 @@
+import { FormProps } from "../../@types/components/FormProps";
 import { LoginFormValues } from "../../@types/components/FormValues";
-import { useRef } from "react";
 
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 
 import Input from "./Input";
@@ -8,7 +9,7 @@ import Button from "../button";
 
 import PostLogin from "../../api_services/PostLogin";
 
-const Login = () => {
+const Login = ({ loading, toggleLoading }: FormProps) => {
   const formRef = useRef<HTMLFormElement>(null),
     {
       register,
@@ -24,8 +25,12 @@ const Login = () => {
       id="loginForm"
       ref={formRef}
       onSubmit={handleSubmit(() => {
+        toggleLoading({ ...loading, login: true });
         console.log("Submitted", watch());
-        handleLogin(watch(), formRef);
+        handleLogin(watch(), formRef).finally(() => {
+          console.log("finally");
+          toggleLoading({ ...loading, login: false });
+        });
       })}
     >
       {errors.root && (
@@ -63,7 +68,7 @@ const Login = () => {
         placeholder=" "
       />
 
-      <Button text="Login" type="submit" />
+      <Button text="Login" type="submit" isLoading={loading.login} />
     </form>
   );
 };
