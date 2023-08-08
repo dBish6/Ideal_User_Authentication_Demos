@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { GlobalContextProvider } from "./contexts/GlobalContext";
+import { ToastContextProvider } from "./contexts/ToastContext";
 import App from "./App";
 
 const root = ReactDOM.createRoot(
@@ -8,6 +9,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <GlobalContextProvider>
-    <App />
+    <ToastContextProvider>
+      <App />
+    </ToastContextProvider>
   </GlobalContextProvider>
 );
