@@ -1,5 +1,5 @@
 import { ButtonProps } from "../../@types/components/ButtonProps";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import "./button.css";
 import Spinner from "../loaders/Spinner";
 import useKeyboardHelper from "../../hooks/useKeyboardHelper";
@@ -9,7 +9,7 @@ const Button = ({
   icon,
   alt,
   isIconBtn,
-  isLoading,
+  loading,
   style,
   onClick,
   className,
@@ -18,13 +18,24 @@ const Button = ({
   const btnRef = useRef<HTMLButtonElement>(null),
     handleKeyDown = useKeyboardHelper();
 
+  const isGoogleBtn = options.id === "googleBtn",
+    isGithubBtn = options.id === "githubBtn";
+
+  const isAnyLoading =
+      loading && (loading.email || loading.google || loading.gitHub),
+    isLoading =
+      loading &&
+      ((isGoogleBtn && loading.google) ||
+        (isGithubBtn && loading.gitHub) ||
+        (!isGithubBtn && !isGoogleBtn && loading.email));
+
   return (
     <button
-      aria-disabled={isLoading}
-      disabled={isLoading}
+      aria-disabled={isAnyLoading}
+      disabled={isAnyLoading}
       className={className ? `btnMain ${className}` : "btnMain"}
       style={{
-        backgroundColor: isLoading ? "rgba(36, 36, 36, 0.5)" : "",
+        backgroundColor: isAnyLoading ? "rgba(36, 36, 36, 0.5)" : "",
         ...style,
       }}
       ref={btnRef}
@@ -35,8 +46,8 @@ const Button = ({
       <span
         className="btnTop"
         style={{
-          backgroundColor: isLoading ? "#d6d6d6" : "",
-          borderColor: isLoading ? "rgba(36, 36, 36, 0.5)" : "",
+          backgroundColor: isAnyLoading ? "#d6d6d6" : "",
+          borderColor: isAnyLoading ? "rgba(36, 36, 36, 0.5)" : "",
         }}
       >
         {icon && (

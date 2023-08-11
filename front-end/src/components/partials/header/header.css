@@ -19,29 +19,60 @@ header .nodeLogo {
   min-height: 104px;
 }
 
+header div:nth-last-child(1) {
+  display: flex;
+  justify-content: flex-end;
+}
+
 header .title,
-header h2 {
+header div:nth-last-child(1) {
   flex: 1;
 }
 
-header .title h1 {
-  font-size: clamp(1.25rem, 0.9924892703862661rem + 1.2875536480686696vw, 2rem);
+header .title h1,
+header div:nth-last-child(1) h2 {
   font-weight: 400;
   font-style: italic;
 }
 
-header h2 {
-  font-size: clamp(1rem, 0.7424892703862661rem + 1.2875536480686696vw, 1.75rem);
-  text-align: right;
+header .title h1 {
+  font-size: clamp(1.25rem, 0.9924892703862661rem + 1.2875536480686696vw, 2rem);
 }
 
-header h2 span {
+header div:nth-last-child(1) h2 {
+  font-size: clamp(1rem, 0.7424892703862661rem + 1.2875536480686696vw, 1.75rem);
+}
+
+header div:nth-last-child(1) h2 span {
   font-size: clamp(1.25rem, 0.9924892703862661rem + 1.2875536480686696vw, 2rem);
   font-style: normal;
 }
 
+header div:nth-last-child(1) .logoutBtn {
+  position: relative;
+  font-family: "Source Serif 4", serif;
+  font-size: clamp(1rem, 0.7424892703862661rem + 1.2875536480686696vw, 1.75rem);
+  text-decoration: underline solid var(--g400);
+  color: var(--txt);
+  background-color: transparent;
+}
+
+header div:nth-last-child(1) .logoutBtn:hover,
+header div:nth-last-child(1) .logoutBtn:focus-visible,
+header div:nth-last-child(1) .logoutBtn:active,
+header div:nth-last-child(1) .logoutBtn.selected {
+  color: var(--hTxt);
+  text-decoration-color: var(--g500);
+}
+
+header div:nth-last-child(1) .logoutBtn:active,
+header div:nth-last-child(1) .logoutBtn.selected {
+  top: 2px;
+  text-decoration-color: var(--g600);
+}
+
 @media screen and (max-width: 1000px) {
-  header h2 {
+  header div:nth-last-child(1) h2 {
     display: none;
   }
 }

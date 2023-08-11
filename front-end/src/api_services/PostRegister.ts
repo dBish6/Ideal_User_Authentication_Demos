@@ -1,9 +1,11 @@
 import { UseFormSetError } from "react-hook-form";
 import { RegisterFormValues } from "../@types/components/FormValues";
 import RequestHandler from "./AxiosInstance";
+import { useToastContext } from "../contexts/ToastContext";
 
 const PostRegister = (setError: UseFormSetError<RegisterFormValues>) => {
-  const { instance } = RequestHandler();
+  const { instance } = RequestHandler(),
+    addToast = useToastContext();
 
   const handleRegister = async (
     user: RegisterFormValues,
@@ -27,9 +29,13 @@ const PostRegister = (setError: UseFormSetError<RegisterFormValues>) => {
           password: user.password,
         },
       });
-      if (res && res.status === 200) formRef.current!.reset();
+      if (res && res.status === 200) {
+        formRef.current!.reset();
+        addToast("User was successfully registered!", "success");
+      }
+      return res;
     } catch (error: any) {
-      if (error.includes("exists")) {
+      if (typeof error == "string" && error.includes("exists")) {
         setError("root", {
           type: "manual",
           message: error,

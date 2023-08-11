@@ -5,27 +5,27 @@ import RequestHandler from "./AxiosInstance";
 
 const PostSessionRefresh = (
   currentUser: CurrentUser,
-  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser>>,
-  logOutUser: () => Promise<void>
+  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser>>
+  // logOutUser: () => Promise<void>
 ) => {
   const { instance, abortController } = RequestHandler();
 
   useEffect(() => {
     const handleRefresh = async () => {
       if (currentUser.sessionStatus === false) {
-        try {
-          const res = await instance({
-            method: "POST",
-            url: "/auth/refresh",
-          });
-          if (res && res.status === 200)
-            setCurrentUser({ user: res.data.user, sessionStatus: true });
-        } catch (error: any) {
-          if (!error.includes("CSRF") && localStorage.getItem("loggedIn")) {
-            await logOutUser();
-            alert("User session timed out, please proceed to login.");
-          }
-        }
+        // try {
+        const res = await instance({
+          method: "POST",
+          url: "/auth/refresh",
+        });
+        if (res && res.status === 200)
+          setCurrentUser({ user: res.data.user, sessionStatus: true });
+        // } catch (error: any) {
+        //   if (!error.includes("CSRF") && localStorage.getItem("loggedIn")) {
+        //     await logOutUser();
+        //     alert("User session timed out, please proceed to login.");
+        //   }
+        // }
       }
     };
     handleRefresh();

@@ -27,11 +27,17 @@ const Register = ({ loading, toggleLoading }: FormProps) => {
     <form
       ref={formRef}
       onSubmit={handleSubmit(() => {
-        toggleLoading({ ...loading, register: true });
+        toggleLoading({
+          ...loading,
+          register: { ...loading.register, email: true },
+        });
         console.log("Submitted", watch());
         handleRegister(watch(), formRef).finally(() => {
           console.log("finally");
-          toggleLoading({ ...loading, register: false });
+          toggleLoading({
+            ...loading,
+            register: { ...loading.register, email: false },
+          });
         });
       })}
     >
@@ -141,7 +147,7 @@ const Register = ({ loading, toggleLoading }: FormProps) => {
         placeholder=" "
       />
 
-      <Button text="Register" type="submit" isLoading={loading.register} />
+      <Button text="Register" type="submit" loading={loading.register} />
     </form>
   );
 };

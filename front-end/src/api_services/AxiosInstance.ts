@@ -45,9 +45,11 @@ const RequestHandler: RequestHandlerTypes = (options) => {
         if (error.response.status === 400) {
           // Bad Request Messages
           if (
+            errorMessage.includes("already exists") ||
             errorMessage === "Email or password is incorrect." ||
             errorMessage === "Incorrect email." ||
-            errorMessage === "Incorrect password."
+            errorMessage === "Incorrect password." ||
+            errorMessage.includes("google user")
           ) {
             throw errorMessage;
           }
@@ -67,6 +69,7 @@ const RequestHandler: RequestHandlerTypes = (options) => {
           }
         } else if (
           error.response.status === 404 &&
+          errorMessage &&
           errorMessage.includes("incorrect subject")
         ) {
           navigate("/error500");

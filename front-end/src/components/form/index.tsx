@@ -13,10 +13,16 @@ import Button from "../button";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import useKeyboardHelper from "../../hooks/useKeyboardHelper";
 
+import InitializeGoogleClient from "../../api_services/google/InitializeGoogleClient";
+
 const Form = () => {
   const [isLogin, setIsLogin] = useState(false),
     [loading, toggleLoading] = useState({
-      register: false,
+      register: {
+        email: false,
+        google: false,
+        gitHub: false,
+      },
       login: false,
     });
 
@@ -27,6 +33,8 @@ const Form = () => {
 
   const { selectedBackEnd } = useGlobalContext(),
     handleKeyDown = useKeyboardHelper();
+
+  InitializeGoogleClient(toggleLoading);
 
   return (
     <div className="formWrapper">
@@ -56,8 +64,19 @@ const Form = () => {
             <hr aria-hidden="true" />
           </div>
           <div className="thirdParty">
-            <Button text="Use Google" icon={googleLogo} />
-            <Button text="Use Github" icon={githubLogo} />
+            <Button
+              text="Use Google"
+              icon={googleLogo}
+              id="googleBtn"
+              onClick={() => google.accounts.id.prompt()}
+              loading={loading.register}
+            />
+            <Button
+              text="Use Github"
+              icon={githubLogo}
+              id="githubBtn"
+              loading={loading.register}
+            />
           </div>
 
           <p

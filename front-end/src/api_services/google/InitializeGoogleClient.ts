@@ -1,11 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import PostGoogleLogin from "./PostGoogleLogin";
 
-const InitializeGoogleClient = () => {
-  const handleGoogleLoginCallback = PostGoogleLogin();
+const InitializeGoogleClient = (
+  toggleLoading: React.Dispatch<
+    React.SetStateAction<{
+      register: {
+        email: boolean;
+        google: boolean;
+        gitHub: boolean;
+      };
+      login: boolean;
+    }>
+  >
+) => {
+  const handleGoogleLoginCallback = PostGoogleLogin(toggleLoading);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     google.accounts.id.initialize({
       client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID as string,
       callback: handleGoogleLoginCallback,

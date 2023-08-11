@@ -1,17 +1,20 @@
 import { useLocation, Link } from "react-router-dom";
-import "./header.css";
 
+import "./header.css";
 import SpringLogo from "../../../assets/SpringLogo.png";
 import NodeLogo from "../../../assets/Node.jsLogo.png";
+
+import Logout from "./Logout";
+
 import { useGlobalContext } from "../../../contexts/GlobalContext";
 
 const Header = () => {
-  const location = useLocation();
-  const { selectedBackEnd } = useGlobalContext();
+  const location = useLocation(),
+    { selectedBackEnd } = useGlobalContext();
 
   return (
     <header>
-      <Link to="/select" className="title">
+      <Link tabIndex={1} to="/select" className="title">
         <h1>User Authentication Demo</h1>
       </Link>
       {location.pathname !== "/select" && selectedBackEnd && (
@@ -21,9 +24,7 @@ const Header = () => {
           className={selectedBackEnd === "spring" ? "springLogo" : "nodeLogo"}
         />
       )}
-      <h2>
-        By: <span>David Bishop</span>
-      </h2>
+      <Logout />
     </header>
   );
 };

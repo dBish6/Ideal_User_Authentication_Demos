@@ -27,8 +27,10 @@ const GetSessionStatus = (
             setCurrentUser((prev) => ({ ...prev, sessionStatus: false }));
           } else {
             // Even when a error happens get this user out of here.
-            if (!error.includes("CSRF") && localStorage.getItem("loggedIn"))
+            if (!error.includes("CSRF") && currentUser.sessionStatus === true) {
               await logOutUser();
+              alert("User session timed out, please proceed to login.");
+            }
           }
         }
       }

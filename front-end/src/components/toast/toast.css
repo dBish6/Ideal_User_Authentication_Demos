@@ -21,13 +21,13 @@
 
 .toastsWrapper .toast.error {
   color: red;
-  background-color: rgba(255, 153, 153, 0.5);
+  background-color: rgba(255, 153, 153, 0.75);
   border: 1px solid red;
 }
 
 .toastsWrapper .toast.success {
-  color: #38a953;
-  background-color: rgba(182, 226, 193, 0.5);
+  color: #339c4c;
+  background-color: rgba(182, 226, 193, 0.75);
   border: 1px solid #38a953;
 }
 

@@ -68,7 +68,11 @@ const Login = ({ loading, toggleLoading }: FormProps) => {
         placeholder=" "
       />
 
-      <Button text="Login" type="submit" isLoading={loading.login} />
+      <Button
+        text="Login"
+        type="submit"
+        // loading={loading.login}
+      />
     </form>
   );
 };
