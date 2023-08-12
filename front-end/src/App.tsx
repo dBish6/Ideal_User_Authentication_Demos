@@ -16,6 +16,7 @@ import {
 import Header from "./components/partials/header";
 import Footer from "./components/partials/footer";
 import PrivateRoute from "./components/PrivateRoute";
+import MustLogoutRoute from "./components/MustLogoutRoute";
 
 import Select from "./pages/Select";
 import Users from "./pages/Users";
@@ -60,7 +61,11 @@ function App() {
               />
               <Route
                 path="/login-register"
-                element={<LoginRegister title="Register" />}
+                element={
+                  <MustLogoutRoute>
+                    <LoginRegister title="Register" />
+                  </MustLogoutRoute>
+                }
               />
               <Route
                 path="/users"
