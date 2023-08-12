@@ -23,11 +23,15 @@ const GetSessionStatus = (
           if (res && res.status === 200)
             setCurrentUser({ user: res.data.user, sessionStatus: true });
         } catch (error: any) {
-          if (error.includes("expired")) {
+          const errorMessage = error as string;
+          if (errorMessage.includes("expired")) {
             setCurrentUser((prev) => ({ ...prev, sessionStatus: false }));
           } else {
-            // Even when a error happens get this user out of here.
-            if (!error.includes("CSRF") && currentUser.sessionStatus === true) {
+            // Even when a error happens get this user out of here and there is a response.
+            if (
+              !errorMessage.includes("CSRF") &&
+              currentUser.sessionStatus === true
+            ) {
               await logOutUser();
               alert("User session timed out, please proceed to login.");
             }
