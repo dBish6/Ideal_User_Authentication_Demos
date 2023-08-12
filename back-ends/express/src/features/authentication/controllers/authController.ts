@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import User from "../../../model/User";
 import RegisterRequestDto from "../dtos/RegisterRequestDto";
 
 import * as authService from "../services/authService";
 import * as jwtService from "../services/jwtService";
+import GetUserDto from "../dtos/GetUserDto";
 
 export const getUsers = async (
   req: Request,
@@ -64,16 +64,22 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
+  // Checks if user is valid in verifyUserInCache...
+  // Checks if the google user is valid in verifyTokens.verifyGoogleIdToken on /login/google request...
+
   try {
-    // Checks if user is valid in verifyUserInCache...
+    const user = (
+      req.googleDecodedClaims
+        ? await authService.googleLogin(req.googleDecodedClaims)
+        : req.authUser
+    ) as GetUserDto;
 
     const generateJWT = new jwtService.GenerateJWT(),
-      accessToken = generateJWT.accessToken(req.body.email),
-      refreshToken = await generateJWT.refreshToken(req.body.email);
+      accessToken = generateJWT.accessToken(user.email),
+      refreshToken = await generateJWT.refreshToken(user.email);
 
     res // Create 'session' cookie.
       .cookie("session", accessToken, {
-        // maxAge: 1000 * 60 * 60 * 24, // One day.
         maxAge: 1000 * 60 * 15, // 15 minutes.
         httpOnly: true,
         secure: true,
@@ -86,9 +92,9 @@ export const login = async (
         secure: true,
         sameSite: "none",
       });
-    return res.json({
+    return res.status(200).json({
       message: "User is successfully authenticated.",
-      user: req.authUser, // authUser was attached to the request object in verifyUserInCache.
+      user: user, // authUser was attached to the request object in verifyUserInCache.
     });
   } catch (error: any) {
     error.reason = "failed to create user session.";
@@ -102,21 +108,18 @@ export const checkSession = async (
   next: NextFunction
 ) => {
   try {
-    // Just verifies access token...
+    // Verifies access token...
     console.log("req.decodedClaims", req.decodedClaims);
     const user = await authService.getUser(req.decodedClaims!.sub!);
-    console.log("user", user);
     if (!user)
       return res.status(404).send({
         message: "User doesn't exist, incorrect subject in cookie.",
       });
 
-    return res
-      .status(200)
-      .json({
-        message: "Session status was successfully checked.",
-        user: user,
-      });
+    return res.status(200).json({
+      message: "Session status was successfully checked.",
+      user: user,
+    });
   } catch (error: any) {
     error.reason = "failed to check user session status.";
     next(error);
@@ -155,7 +158,7 @@ export const refresh = async (
         secure: true,
         sameSite: "none",
       });
-    return res.json({
+    return res.status(200).json({
       message: "User is successfully authenticated, session refresh complete.",
       user: user,
     });
@@ -181,6 +184,7 @@ export const logout = async (
   }
 };
 
+// TODO:
 export const deleteUser = async (
   req: Request,
   res: Response,

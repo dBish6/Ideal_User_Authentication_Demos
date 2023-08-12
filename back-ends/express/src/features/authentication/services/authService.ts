@@ -1,8 +1,10 @@
-import { hash } from "bcrypt";
-
 import User from "../../../model/User";
-import { GetUserValues } from "../../../@types/GetUserValues";
 import GetUserDto from "../dtos/GetUserDto";
+import { GetUserValues } from "../../../@types/GetUserValues";
+import { GoogleIdTokenPayload } from "../../../@types/GoogleIdTokenPayload";
+
+import { hash } from "bcrypt";
+import { verify } from "jsonwebtoken";
 
 import { redisClient } from "../../../configs/redisConfig";
 
@@ -45,13 +47,35 @@ export const getUser: GetUserValues = async (email, getAll) => {
   }
 };
 
-export const register = async (user: User) => {
+export const register = async (user: User, isThirdParty?: boolean) => {
   try {
-    user.password = await hash(user.password, 12);
+    if (!isThirdParty) user.password = await hash(user.password, 12);
     return redisClient.hSet(KEY, user.email, JSON.stringify(user));
   } catch (error) {
     throw new Error("Redis error; caching the user into Redis:\n" + error);
   }
+};
+
+export const googleLogin = async (
+  googleDecodedClaims: GoogleIdTokenPayload
+) => {
+  const isUser = await redisClient.hExists(KEY, googleDecodedClaims.email);
+  if (isUser) {
+    console.log("Google user exists within Redis.");
+  } else {
+    console.log("Registering google user.");
+    const { email, name } = googleDecodedClaims,
+      user = {
+        email,
+        displayName: name,
+        fullName: name,
+        password: "google provided",
+      } as User;
+    await register(user, true);
+  }
+
+  const user = (await getUser(googleDecodedClaims.email)) as GetUserDto;
+  return user;
 };
 
 export const deleteUser = async (email: string) => {

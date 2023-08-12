@@ -1,10 +1,12 @@
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
-import User from "../../model/User";
+import { GoogleIdTokenPayload } from "../GoogleIdTokenPayload";
+import GetUserDto from "../../features/authentication/dtos/GetUserDto";
 
 declare module "express-serve-static-core" {
   interface Request {
     decodedClaims?: JwtPayload;
-    authUser?: User;
+    googleDecodedClaims?: GoogleIdTokenPayload;
+    authUser?: GetUserDto;
   }
 }

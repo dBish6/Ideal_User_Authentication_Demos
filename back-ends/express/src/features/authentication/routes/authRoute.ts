@@ -12,9 +12,11 @@ router.delete("/user/:email", verifyCsrfToken, verifyTokens.verifyAccessToken, a
 
 router.post("/register", verifyCsrfToken, authController.register);
 router.post("/login", verifyCsrfToken, verifyUserInCache, authController.login);
-// router.post("/login/google", authController);
+router.post("/login/google", verifyCsrfToken, verifyTokens.verifyGoogleIdToken, authController.login);
+
 router.get("/checkSession", verifyTokens.verifyAccessToken, authController.checkSession);
 router.post("/refresh", verifyCsrfToken, verifyTokens.verifyRefreshToken, authController.refresh);
+
 router.post("/logout", verifyCsrfToken, authController.logout);
 
 export default router;
