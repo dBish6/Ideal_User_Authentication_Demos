@@ -21,21 +21,25 @@ const Button = ({
   const isGoogleBtn = options.id === "googleBtn",
     isGithubBtn = options.id === "githubBtn";
 
-  const isAnyLoading =
-      loading && (loading.email || loading.google || loading.gitHub),
-    isLoading =
+  const isAnyRegLoading =
       loading &&
+      typeof loading === "object" &&
+      (loading.email || loading.google || loading.gitHub),
+    isRegLoading =
+      loading &&
+      typeof loading === "object" &&
       ((isGoogleBtn && loading.google) ||
         (isGithubBtn && loading.gitHub) ||
         (!isGithubBtn && !isGoogleBtn && loading.email));
 
   return (
     <button
-      aria-disabled={isAnyLoading}
-      disabled={isAnyLoading}
+      aria-disabled={isAnyRegLoading || loading === true}
+      disabled={isAnyRegLoading || loading === true}
       className={className ? `btnMain ${className}` : "btnMain"}
       style={{
-        backgroundColor: isAnyLoading ? "rgba(36, 36, 36, 0.5)" : "",
+        backgroundColor:
+          isAnyRegLoading || loading === true ? "rgba(36, 36, 36, 0.5)" : "",
         ...style,
       }}
       ref={btnRef}
@@ -46,8 +50,9 @@ const Button = ({
       <span
         className="btnTop"
         style={{
-          backgroundColor: isAnyLoading ? "#d6d6d6" : "",
-          borderColor: isAnyLoading ? "rgba(36, 36, 36, 0.5)" : "",
+          backgroundColor: isAnyRegLoading || loading === true ? "#d6d6d6" : "",
+          borderColor:
+            isAnyRegLoading || loading === true ? "rgba(36, 36, 36, 0.5)" : "",
         }}
       >
         {icon && (
@@ -57,13 +62,13 @@ const Button = ({
             {...(!isIconBtn && {
               style: {
                 marginRight: "0.5rem",
-                display: isLoading ? "none" : "initial",
+                display: isRegLoading || loading === true ? "none" : "initial",
               },
             })}
           ></img>
         )}
         {!isIconBtn &&
-          (isLoading ? (
+          (isRegLoading || loading === true ? (
             <Spinner />
           ) : (
             <p

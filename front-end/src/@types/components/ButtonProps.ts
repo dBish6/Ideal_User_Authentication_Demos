@@ -3,11 +3,13 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: string;
   alt?: string;
   isIconBtn?: boolean;
-  loading?: {
-    email: boolean;
-    google: boolean;
-    gitHub: boolean;
-  };
+  loading?:
+    | boolean
+    | {
+        email: boolean;
+        google: boolean;
+        gitHub: boolean;
+      };
   style?: object;
   onClick?: () => void;
 };
