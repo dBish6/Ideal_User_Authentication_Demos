@@ -31,8 +31,7 @@
   font-weight: 600;
   background-color: var(--lvl2);
   transform: translateY(-4px);
-  transition: 0.1s ease-in-out transform;
-  transition: 0.2s ease-in-out background-color;
+  transition: 0.125s ease-in-out all;
 }
 
 .btnMain:hover .btnTop,
