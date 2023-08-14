@@ -10,9 +10,6 @@ import Button from "../button";
 import PostRegister from "../../api_services/PostRegister";
 
 const Register = ({ loading, toggleLoading }: FormProps) => {
-  // TODO: Feedback.
-  // TODO: Verify email.
-
   const formRef = useRef<HTMLFormElement>(null),
     {
       register,
@@ -33,7 +30,6 @@ const Register = ({ loading, toggleLoading }: FormProps) => {
         });
         console.log("Submitted", watch());
         handleRegister(watch(), formRef).finally(() => {
-          console.log("finally");
           toggleLoading({
             ...loading,
             register: { ...loading.register, email: false },

@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useLayoutEffect } from "react";
+import { GoogleOAuthProvider } from "google-oauth-gsi";
 import PostGoogleLogin from "./PostGoogleLogin";
 
 const InitializeGoogleClient = (
@@ -14,15 +13,24 @@ const InitializeGoogleClient = (
     }>
   >
 ) => {
-  const handleGoogleLoginCallback = PostGoogleLogin(toggleLoading);
+  const handleGoogleLogin = PostGoogleLogin(toggleLoading);
 
-  useLayoutEffect(() => {
-    google.accounts.id.initialize({
-      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID as string,
-      callback: handleGoogleLoginCallback,
-      cancel_on_tap_outside: false,
-    });
-  }, []);
+  const googleProvider = new GoogleOAuthProvider({
+    clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID as string,
+    onScriptLoadError: () =>
+      console.error("GoogleOAuthProvider failed to load, check client id."),
+    onScriptLoadSuccess: () =>
+      console.log("GoogleOAuthProvider successfully loaded"),
+  });
+
+  const oneTap = googleProvider.useGoogleOneTapLogin({
+    cancel_on_tap_outside: false,
+    onSuccess: (res) => handleGoogleLogin(res),
+    onError: () =>
+      console.error("useGoogleOneTapLogin unexpected error occurred."),
+  });
+
+  return oneTap;
 };
 
 export default InitializeGoogleClient;

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { CredentialResponse } from "google-oauth-gsi";
 import RequestHandler from "../AxiosInstance";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useToastContext } from "../../contexts/ToastContext";
@@ -21,23 +22,21 @@ const PostGoogleLogin = (
   const { instance } = RequestHandler(),
     { setCurrentUser } = useAuthContext();
 
-  const handleGoogleLoginCallback = async (
-    googleRes: google.accounts.id.CredentialResponse
-  ) => {
+  const handleGoogleLogin = async (googleRes: CredentialResponse) => {
     toggleLoading((prev) => ({
       ...prev,
       register: { ...prev.register, google: true },
     }));
-    console.log("googleRes", googleRes);
-    const userIdToken = googleRes.credential;
+    // console.log("googleRes", googleRes);
 
-    const res = await instance({
-      method: "POST",
-      url: "/auth/login/google",
-      headers: {
-        Authorization: "Bearer " + userIdToken,
-      },
-    });
+    const userIdToken = googleRes.credential,
+      res = await instance({
+        method: "POST",
+        url: "/auth/login/google",
+        headers: {
+          Authorization: "Bearer " + userIdToken,
+        },
+      });
     if (res && res.status === 200) {
       setCurrentUser({ user: res.data.user, sessionStatus: true });
       localStorage.setItem("loggedIn", res.data.user.displayName);
@@ -45,13 +44,14 @@ const PostGoogleLogin = (
 
       addToast(`Welcome back ${res.data.user.displayName}!`, "success");
     }
+
     toggleLoading((prev) => ({
       ...prev,
       register: { ...prev.register, google: false },
     }));
   };
 
-  return handleGoogleLoginCallback;
+  return handleGoogleLogin;
 };
 
 export default PostGoogleLogin;
