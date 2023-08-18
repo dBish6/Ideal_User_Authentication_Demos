@@ -1,7 +1,7 @@
 import { GoogleOAuthProvider } from "google-oauth-gsi";
 import PostGoogleLogin from "./PostGoogleLogin";
 
-const InitializeGoogleClient = (
+const InitializeGoogleLoginProvider = (
   toggleLoading: React.Dispatch<
     React.SetStateAction<{
       register: {
@@ -33,4 +33,4 @@ const InitializeGoogleClient = (
   return oneTap;
 };
 
-export default InitializeGoogleClient;
+export default InitializeGoogleLoginProvider;
