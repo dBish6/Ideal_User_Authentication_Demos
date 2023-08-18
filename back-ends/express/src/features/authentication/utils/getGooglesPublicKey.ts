@@ -11,13 +11,11 @@ const getGooglesPublicKey = async (userIdToken: string) => {
     const decodedHeader = decode(userIdToken, { complete: true }) as {
       header: { alg: Algorithm; kid: string; typ: string };
     };
-    console.log("decodedHeader", decodedHeader);
-    const key = await client.getSigningKey(decodedHeader.header.kid);
-    console.log("key", key);
-    const publicKey = key.getPublicKey();
-    console.log("publicKey", publicKey);
+    // console.log("decodedHeader", decodedHeader);
+    const key = await client.getSigningKey(decodedHeader.header.kid),
+      publicKey = key.getPublicKey();
 
-    return { header: decodedHeader.header, publicKey };
+    return { algorithm: decodedHeader.header.alg, publicKey };
   } catch (error: any) {
     throw new Error("getGooglesPublicKey error:" + error.message);
   }

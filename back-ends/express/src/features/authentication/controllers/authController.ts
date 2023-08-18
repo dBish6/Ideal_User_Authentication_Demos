@@ -64,15 +64,41 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
-  // Checks if user is valid in verifyUserInCache...
+  // Checks if user is valid in verifyUserInCache for standard email login...
+  // ---or---
   // Checks if the google user is valid in verifyTokens.verifyGoogleIdToken on /login/google request...
+  // ---or---
+  // Fetches the GitHub user's access token with the code param in getGithubUserAccessToken on /login/github request...
 
   try {
+    req.gitHubAccessToken &&
+      console.log("req.gitHubAccessToken", req.gitHubAccessToken);
+
     const user = (
       req.googleDecodedClaims
         ? await authService.googleLogin(req.googleDecodedClaims)
+        : req.gitHubAccessToken
+        ? await authService.githubLogin(req.gitHubAccessToken)
         : req.authUser
-    ) as GetUserDto;
+    ) as GetUserDto & { githubFetchErr?: any };
+    if (user.githubFetchErr) {
+      // When requesting for the user with the GitHub access token to GitHub's api...
+      if (
+        typeof user.githubFetchErr === "string" &&
+        user.githubFetchErr.includes("not found")
+      ) {
+        // On no response data.
+        return res.status(404).send({
+          message: user.githubFetchErr,
+        });
+      } else {
+        // On a bad status code.
+        return res.status(403).send({
+          message: "GitHub user ID access token is invalid.",
+          ERROR: user.githubFetchErr,
+        });
+      }
+    }
 
     const generateJWT = new jwtService.GenerateJWT(),
       accessToken = generateJWT.accessToken(user.email),
@@ -94,7 +120,7 @@ export const login = async (
       });
     return res.status(200).json({
       message: "User is successfully authenticated.",
-      user: user, // authUser was attached to the request object in verifyUserInCache.
+      user: user,
     });
   } catch (error: any) {
     error.reason = "failed to create user session.";
@@ -109,7 +135,7 @@ export const checkSession = async (
 ) => {
   try {
     // Verifies access token...
-    console.log("req.decodedClaims", req.decodedClaims);
+
     const user = await authService.getUser(req.decodedClaims!.sub!);
     if (!user)
       return res.status(404).send({
@@ -134,7 +160,6 @@ export const refresh = async (
   try {
     // When the refresh token is verified generate the new access token.
 
-    console.log("req.decodedClaims", req.decodedClaims);
     const user = await authService.getUser(req.decodedClaims!.sub!);
     if (!user)
       return res.status(404).send({

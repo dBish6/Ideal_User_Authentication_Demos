@@ -111,10 +111,10 @@ export const verifyGoogleIdToken = async (
 
   try {
     const userIdToken = authHeader.split(" ")[1],
-      { header, publicKey } = await getGooglesPublicKey(userIdToken);
+      { algorithm, publicKey } = await getGooglesPublicKey(userIdToken);
 
     const googleDecodedClaims = verify(userIdToken, publicKey, {
-      algorithms: [header.alg],
+      algorithms: [algorithm],
     }) as GoogleIdTokenPayload;
     // console.log("google decodedClaims", googleDecodedClaims);
 

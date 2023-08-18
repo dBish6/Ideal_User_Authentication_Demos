@@ -13,22 +13,25 @@ const verifyUserInCache = async (
 ) => {
   try {
     const user = (await getUser(req.body.email, true)) as User;
-    if (!user) {
+    if (!user)
       return res.status(400).send({
         message: "Incorrect email.",
       });
-    }
 
     if (user.password === "google provided") {
       return res.status(400).send({
-        message: `A google user was found, please "Use Google" to log in.`,
+        message: `A Google user was found, please "Use Google" to log in.`,
+      });
+    } else if (user.password === "github provided") {
+      return res.status(400).send({
+        message: `A GitHub user was found, please "Use GitHub" to log in.`,
       });
     }
-    if (!(await compare(req.body.password, user.password))) {
+
+    if (!(await compare(req.body.password, user.password)))
       return res.status(400).send({
         message: "Incorrect password.",
       });
-    }
 
     const { password, ...rest } = user;
     req.authUser = rest as GetUserDto;

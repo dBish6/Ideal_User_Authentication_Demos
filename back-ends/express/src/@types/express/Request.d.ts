@@ -6,7 +6,8 @@ import GetUserDto from "../../features/authentication/dtos/GetUserDto";
 declare module "express-serve-static-core" {
   interface Request {
     decodedClaims?: JwtPayload;
-    googleDecodedClaims?: GoogleIdTokenPayload;
     authUser?: GetUserDto;
+    googleDecodedClaims?: GoogleIdTokenPayload;
+    gitHubAccessToken?: string;
   }
 }
