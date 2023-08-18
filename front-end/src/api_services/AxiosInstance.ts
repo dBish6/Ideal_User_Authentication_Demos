@@ -73,10 +73,7 @@ const RequestHandler: RequestHandlerTypes = (options) => {
           errorMessage.includes("incorrect subject")
         ) {
           navigate("/error500");
-        } else if (
-          error.response.status === 500 ||
-          error.code === "NETWORK ERROR" // FIXME: ?
-        ) {
+        } else if (error.code === "NETWORK ERROR") {
           navigate("/error-500");
         }
       } else if (error.message === "canceled") {

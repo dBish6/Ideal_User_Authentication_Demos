@@ -1,4 +1,3 @@
-// FIXME:
 export type SelectBoxProps = {
   name: "Spring" | "Express";
   img: string;

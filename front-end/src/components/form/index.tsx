@@ -13,7 +13,7 @@ import Button from "../button";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import useKeyboardHelper from "../../hooks/useKeyboardHelper";
 
-import InitializeGoogleClient from "../../api_services/google/InitializeGoogleClient";
+import InitializeGoogleLoginProvider from "../../api_services/google/InitializeGoogleLoginProvider";
 import githubLoginRedirect from "../../api_services/github/githubLoginRedirect";
 import PostGithubLogin from "../../api_services/github/PostGithubLogin";
 
@@ -36,7 +36,7 @@ const Form = () => {
   const { selectedBackEnd } = useGlobalContext(),
     handleKeyDown = useKeyboardHelper();
 
-  const oneTap = InitializeGoogleClient(toggleLoading);
+  const oneTap = InitializeGoogleLoginProvider(toggleLoading);
 
   PostGithubLogin(toggleLoading); // When the user is redirected back to here on a GitHub login, this will fire.
 
@@ -76,7 +76,7 @@ const Form = () => {
               loading={loading.register}
             />
             <Button
-              text="Use Github"
+              text="Use GitHub"
               icon={githubLogo}
               id="githubBtn"
               onClick={() => githubLoginRedirect()}

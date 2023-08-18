@@ -47,7 +47,12 @@ const PostLogin = (setError: UseFormSetError<LoginFormValues>) => {
             type: "manual",
             message: error,
           });
-        } else if (error.includes("google user")) {
+        } else if (error.includes("Google user")) {
+          setError("root", {
+            type: "manual",
+            message: error,
+          });
+        } else if (error.includes("GitHub user")) {
           setError("root", {
             type: "manual",
             message: error,
