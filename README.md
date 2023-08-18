@@ -3,7 +3,7 @@
 Welcome to my user authentication showcase! This demo web application demonstrates an advanced user authentication flow with two different back-ends, as of now; `TypeScript Express` and `Java Spring Boot`. This demo offers a secure authentication process utilizing OAuth's JWT (JSON Web Tokens) for token-based authentication and OAuth for third-party logins, such as `Google` and `GitHub`. This demo also utilizes access and refresh tokens for the user login session.
 
 ### Development
-The express back-end user authentication flow is finished and I am now trying to incorporate the third-party logins for Spring Boot.
+The express back-end user authentication flow is finished and I am now trying to incorporate the third-party logins for Spring Boot and refresh tokens.
 
 ## Back-ends
 Demonstrations for two popular back-end frameworks:
