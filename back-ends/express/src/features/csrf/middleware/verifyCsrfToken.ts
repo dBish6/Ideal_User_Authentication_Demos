@@ -6,7 +6,7 @@ const verifyCsrfToken = async (
   res: Response,
   next: NextFunction
 ) => {
-  const storedToken = req.cookies.XSRF_TOKEN,
+  const storedToken = req.cookies["XSRF-TOKEN"],
     receivedToken = req.headers["x-xsrf-token"];
   if (!storedToken || !receivedToken) {
     return res.status(403).json({

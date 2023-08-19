@@ -12,7 +12,7 @@ export const initializeCsrfToken = async (
 
     // Another approach would be to store the token in Redis and compare it instead of storing it in a cookie.
     return res
-      .cookie("XSRF_TOKEN", csrfToken, {
+      .cookie("XSRF-TOKEN", csrfToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
