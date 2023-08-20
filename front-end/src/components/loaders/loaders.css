@@ -15,3 +15,73 @@
     transform: rotate(360deg);
   }
 }
+
+/* -------------------------------------------------- */
+
+.backdrop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(36, 36, 36, 0.2);
+  filter: blur(12px);
+  z-index: 10;
+}
+
+.overlayLoader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  box-shadow: 0 30px, 0 -30px;
+  color: var(--black);
+  z-index: 10;
+  animation: pulse 2s ease infinite;
+}
+
+.overlayLoader::after,
+.overlayLoader::before {
+  content: "";
+  position: absolute;
+  left: 30px;
+  /* top: 0; */
+  width: 16px;
+  height: 16px;
+  box-shadow: 0 30px, 0 -30px;
+  background-color: currentColor;
+  color: var(--black);
+  animation: pulse 2s 0.2s ease infinite;
+}
+
+.overlayLoader::before {
+  animation-delay: 0.4s;
+  left: 60px;
+}
+
+.overlayLoader p {
+  position: relative;
+  left: 55%;
+  top: calc(60px + 1.5rem);
+}
+
+@keyframes pulse {
+  0% {
+    top: 0;
+    color: var(--black);
+  }
+
+  50% {
+    top: 30px;
+    color: rgba(36, 36, 36, 0.2);
+  }
+
+  100% {
+    top: 0;
+    color: var(--black);
+  }
+}
