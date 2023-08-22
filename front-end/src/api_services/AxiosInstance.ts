@@ -57,13 +57,14 @@ const RequestHandler: RequestHandlerTypes = (options) => {
           // Authorization Needed
           navigate("/error-401");
         } else if (error.response.status === 403) {
-          // Forbidden Messages
-          // TODO: "Token is expired." is still in spring.
-          if (errorMessage === "Access token is expired.") {
-            throw errorMessage;
-          } else if (errorMessage.startsWith("CSRF token")) {
-            navigate("/error-403");
-            throw errorMessage;
+          if (errorMessage) {
+            // Forbidden Messages
+            if (errorMessage === "Access token is expired.") {
+              throw errorMessage;
+            } else if (errorMessage.startsWith("CSRF token")) {
+              navigate("/error-403");
+              throw errorMessage;
+            }
           } else {
             navigate("/error-403");
           }
@@ -81,7 +82,9 @@ const RequestHandler: RequestHandlerTypes = (options) => {
       } else if (error.code === "ECONNABORTED") {
         navigate("/error-500"); // FIXME: This is network error?
       } else {
-        throw new Error("A un-handled unexpected server error occurred.");
+        throw new Error(
+          "A un-handled unexpected server error occurred or check connection."
+        );
       }
 
       console.error("Response error", error);

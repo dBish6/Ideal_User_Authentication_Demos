@@ -50,6 +50,8 @@ table thead tr th {
 }
 
 table tbody tr td {
+  position: relative;
+  /* FIXME: */
   max-width: 200px;
   padding: 0.5rem;
   color: #444444;
@@ -59,6 +61,26 @@ table tbody tr td {
   text-overflow: ellipsis;
   background-color: var(--lvl1);
 }
+
+table tbody tr td:nth-child(3n) {
+  padding-right: calc(0.5rem + 48px);
+}
+
+table tbody tr td:nth-child(3n) button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  padding: 0 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* table tbody tr td:nth-child(3n) button img {
+  display: none;
+} */
 
 table tbody tr td span {
   display: none;

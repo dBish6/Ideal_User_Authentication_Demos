@@ -1,9 +1,15 @@
 import { User } from "../../@types/User";
+
 import "./usersTable.css";
+import trashCan from "../../assets/icons/Delete.svg";
+
 import { useGlobalContext } from "../../contexts/GlobalContext";
 
+import DeleteUser from "../../api_services/DeleteUser";
+
 const UsersTable = ({ users }: { users: User[] }) => {
-  const { selectedBackEnd } = useGlobalContext();
+  const { selectedBackEnd } = useGlobalContext(),
+    handleDelete = DeleteUser();
 
   return (
     <table>
@@ -33,6 +39,9 @@ const UsersTable = ({ users }: { users: User[] }) => {
             <td>
               <span>Name:</span>
               {user.fullName}
+              <button onClick={() => handleDelete(user)}>
+                <img src={trashCan} alt="Delete User" />
+              </button>
             </td>
           </tr>
         ))}

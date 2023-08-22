@@ -28,7 +28,6 @@ const Login = ({ loading, toggleLoading }: FormProps) => {
         toggleLoading({ ...loading, login: true });
         console.log("Submitted", watch());
         handleLogin(watch(), formRef).finally(() => {
-          console.log("finally");
           toggleLoading({ ...loading, login: false });
         });
       })}

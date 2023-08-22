@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useAuthContext } from "../../../contexts/AuthContext";
+import OverlayLoader from "../../loaders/OverlayLoader";
 
 const Logout = () => {
-  const { currentUser, logOutUser } = useAuthContext();
+  const [loading, toggleLoading] = useState(false),
+    { currentUser, logOutUser } = useAuthContext();
 
   return (
     <>
@@ -14,12 +17,16 @@ const Logout = () => {
           <button
             tabIndex={1}
             className="logoutBtn"
-            onClick={() => logOutUser()}
+            onClick={() => {
+              toggleLoading(true);
+              logOutUser().finally(() => toggleLoading(false));
+            }}
           >
             Logout
           </button>
         )}
       </div>
+      {loading && <OverlayLoader />}
     </>
   );
 };

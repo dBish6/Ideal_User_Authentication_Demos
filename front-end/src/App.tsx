@@ -15,6 +15,7 @@ import {
 
 import Header from "./components/partials/header";
 import Footer from "./components/partials/footer";
+import OverlayLoader from "./components/loaders/OverlayLoader";
 import PrivateRoute from "./components/PrivateRoute";
 import MustLogoutRoute from "./components/MustLogoutRoute";
 
@@ -50,7 +51,7 @@ const Structure = () => {
 function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<OverlayLoader />}>
         <AuthContextProvider>
           <Routes>
             <Route element={<Structure />}>
