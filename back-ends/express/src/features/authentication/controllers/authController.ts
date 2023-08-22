@@ -106,6 +106,7 @@ export const login = async (
 
     res // Create 'session' cookie.
       .cookie("session", accessToken, {
+        path: "/",
         maxAge: 1000 * 60 * 15, // 15 minutes.
         httpOnly: true,
         secure: true,
@@ -113,6 +114,7 @@ export const login = async (
       })
       // Create refresh cookie.
       .cookie("refresh", refreshToken, {
+        path: "/",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week.
         httpOnly: true,
         secure: true,
@@ -172,12 +174,14 @@ export const refresh = async (
 
     res // Create cookies again.
       .cookie("session", accessToken, {
+        path: "/",
         maxAge: 1000 * 60 * 15, // 15 minutes.
         httpOnly: true,
         secure: true,
         sameSite: "none",
       })
       .cookie("refresh", refreshToken, {
+        path: "/",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week.
         httpOnly: true,
         secure: true,
