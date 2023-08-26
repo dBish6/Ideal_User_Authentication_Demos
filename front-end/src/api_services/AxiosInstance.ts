@@ -22,7 +22,7 @@ const RequestHandler: RequestHandlerTypes = (options) => {
   // This happens before each request.
   instance.interceptors.request.use(
     (config) => {
-      if (selectedBackEnd === "express" && sessionStorage.getItem("csrf"))
+      if (sessionStorage.getItem("csrf"))
         config.headers["X-XSRF-TOKEN"] = sessionStorage.getItem("csrf");
 
       return config;
