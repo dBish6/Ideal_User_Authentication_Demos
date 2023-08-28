@@ -1,4 +1,4 @@
-package com.demo.server.auth.dtos;
+package com.demo.server.auth.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class LoginRequestDto {
-    private String email;
-    private String password;
+public class AuthTokens {
+    private String access;
+    private String refresh;
 }

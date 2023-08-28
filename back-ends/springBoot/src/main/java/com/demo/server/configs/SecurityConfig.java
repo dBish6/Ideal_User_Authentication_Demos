@@ -1,8 +1,10 @@
 package com.demo.server.configs;
 
-import com.demo.server.auth.utils.JwtAuthFilter;
-import com.demo.server.csrf.configs.CsrfConfig;
+import com.demo.server.auth.filters.VerifyAccessTokenFilter;
+import com.demo.server.auth.filters.VerifyRefreshTokenFilter;
+import com.demo.server.csrf.filters.VerifyCsrfTokenFilter;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
@@ -22,12 +24,14 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final AuthenticationProvider jwtTokenProvider;
-    private final JwtAuthFilter jwtAuthFilter;
-    private final CsrfConfig csrfConfig;
+    private final VerifyCsrfTokenFilter verifyCsrfTokenFilter;
+    private final VerifyAccessTokenFilter verifyAccessTokenFilter;
+    private final VerifyRefreshTokenFilter verifyRefreshTokenFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(@NotNull HttpSecurity http) throws Exception {
         http.cors(cors -> {
             CorsConfiguration config = new CorsConfiguration();
             config.addAllowedOrigin("http://localhost:3000");
@@ -53,14 +57,20 @@ public class SecurityConfig {
             cors.configurationSource(req -> config);
         });
 
-        csrfConfig.configureCsrf(http);
+        http.csrf((csrf) -> csrf.disable()); // Because of the custom csrf verification.
         http.authenticationProvider(jwtTokenProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(verifyCsrfTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(verifyAccessTokenFilter, VerifyCsrfTokenFilter.class)
+                .addFilterAfter(verifyRefreshTokenFilter, VerifyAccessTokenFilter.class)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/csrf/**", "/auth/register", "/auth/login").permitAll()
+                        .requestMatchers(
+                                "/csrf/**",
+                                "/auth/register",
+                                "/auth/login",
+                                "/auth/logout").permitAll()
                         .requestMatchers("/auth/**").authenticated()
                         // .anyRequest().permitAll()
                 );

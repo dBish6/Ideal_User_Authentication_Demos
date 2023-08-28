@@ -1,17 +1,15 @@
-package com.demo.server.auth.dtos;
+package com.demo.server.csrf.dtos;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class LoginResponseDto {
+public class csrfInitResponseDto {
     private String message;
-    private GetUserDto user;
+    private String token;
 }
