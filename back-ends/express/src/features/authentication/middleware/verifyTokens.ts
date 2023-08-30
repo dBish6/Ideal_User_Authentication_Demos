@@ -78,7 +78,7 @@ export const verifyRefreshToken = async (
     const isTokenValid = await isRefreshTokenValid(refreshToken);
     if (!isTokenValid)
       return res.status(403).json({
-        message: "Invalid refresh token; doesn't exist in the cache.",
+        message: "refresh token is invalid; doesn't exist in the cache.",
       });
 
     req.decodedClaims = decodedClaims;

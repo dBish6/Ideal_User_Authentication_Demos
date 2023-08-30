@@ -7,7 +7,7 @@ const getGithubUserAccessToken = async (
 ) => {
   let data;
 
-  console.log("req.body.code", req.body.code);
+  // console.log("req.body.code", req.body.code);
   try {
     const params = `?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}&code=${req.body.code}`,
       response = await fetch(
@@ -20,11 +20,11 @@ const getGithubUserAccessToken = async (
         }
       );
     data = await response.json();
-    console.log("response.status", response.status);
-    console.log("data", data);
+    // console.log("response.status", response.status);
+    // console.log("data", data);
     if (!response.ok || (data && data.error === "bad_verification_code"))
       return res.status(403).json({
-        message: "Invalid code query or user doesn't exist.",
+        message: "Invalid code param or user doesn't exist.",
         githubRes: data,
       });
 

@@ -136,12 +136,12 @@ export const checkSession = async (
   next: NextFunction
 ) => {
   try {
-    // Verifies access token...
+    // Verifies access (session) token...
 
     const user = await authService.getUser(req.decodedClaims!.sub!);
     if (!user)
       return res.status(404).send({
-        message: "User doesn't exist, incorrect subject in cookie.",
+        message: "User doesn't exist, incorrect subject within session cookie.",
       });
 
     return res.status(200).json({
@@ -165,7 +165,7 @@ export const refresh = async (
     const user = await authService.getUser(req.decodedClaims!.sub!);
     if (!user)
       return res.status(404).send({
-        message: "User doesn't exist, incorrect subject in cookie.",
+        message: "User doesn't exist, incorrect subject within refresh cookie.",
       });
 
     const generateJWT = new jwtService.GenerateJWT(),
