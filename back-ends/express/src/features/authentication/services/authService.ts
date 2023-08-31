@@ -112,7 +112,7 @@ export const githubLogin = async (githubAccessToken: string) => {
       if (data.email === null)
         data.email = `${data.id}+${data.login}@users.noreply.github.com`;
 
-      const { email, name } = data,
+      const { login, email, name } = data,
         isUser = await redisClient.hExists(KEY, email);
       if (isUser) {
         console.log(
@@ -122,7 +122,7 @@ export const githubLogin = async (githubAccessToken: string) => {
         console.log("Registering GitHub user.");
         const registeredUser = {
           email,
-          displayName: name,
+          displayName: login,
           fullName: name,
           password: "github provided",
         } as User;
