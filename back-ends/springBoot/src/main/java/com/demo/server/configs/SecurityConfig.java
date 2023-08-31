@@ -1,6 +1,7 @@
 package com.demo.server.configs;
 
 import com.demo.server.auth.filters.VerifyAccessTokenFilter;
+import com.demo.server.auth.filters.VerifyGoogleIdTokenFilter;
 import com.demo.server.auth.filters.VerifyRefreshTokenFilter;
 import com.demo.server.csrf.filters.VerifyCsrfTokenFilter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final VerifyCsrfTokenFilter verifyCsrfTokenFilter;
     private final VerifyAccessTokenFilter verifyAccessTokenFilter;
     private final VerifyRefreshTokenFilter verifyRefreshTokenFilter;
+    private final VerifyGoogleIdTokenFilter verifyGoogleIdTokenFilter;
 
     @Bean
     public SecurityFilterChain filterChain(@NotNull HttpSecurity http) throws Exception {
@@ -40,8 +42,8 @@ public class SecurityConfig {
                     HttpMethod.GET.name(),
                     HttpMethod.POST.name(),
                     HttpMethod.PATCH.name(),
-                    HttpMethod.DELETE.name(),
-                    HttpMethod.OPTIONS.name()
+                    HttpMethod.DELETE.name()
+                    // HttpMethod.OPTIONS.name()
             ));
             config.setAllowedHeaders(Arrays.asList(
                     HttpHeaders.ACCEPT,
@@ -60,6 +62,7 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable()); // Because of the custom csrf verification.
         http.authenticationProvider(jwtTokenProvider)
                 .addFilterBefore(verifyCsrfTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(verifyGoogleIdTokenFilter, VerifyCsrfTokenFilter.class)
                 .addFilterAfter(verifyAccessTokenFilter, VerifyCsrfTokenFilter.class)
                 .addFilterAfter(verifyRefreshTokenFilter, VerifyAccessTokenFilter.class)
                 .sessionManagement((session) -> session
@@ -69,7 +72,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/csrf/**",
                                 "/auth/register",
-                                "/auth/login",
+                                "/auth/login/**",
                                 "/auth/logout").permitAll()
                         .requestMatchers("/auth/**").authenticated()
                         // .anyRequest().permitAll()

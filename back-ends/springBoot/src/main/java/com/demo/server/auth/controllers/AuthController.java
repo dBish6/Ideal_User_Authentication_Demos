@@ -3,6 +3,7 @@ package com.demo.server.auth.controllers;
 import com.demo.server.auth.dtos.*;
 import com.demo.server.auth.model.User;
 import com.demo.server.auth.services.AuthService;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
@@ -48,6 +49,7 @@ public class AuthController {
         HttpStatus status;
         String message;
 
+        // TODO: Move to service for third party logins.
         GetUserDto user = (GetUserDto) authService.getUser(req.getEmail().toLowerCase(), true);
         if (user != null) {
             status = HttpStatus.BAD_REQUEST;
@@ -82,9 +84,29 @@ public class AuthController {
     }
 
     @PostMapping("/login/google")
-    public ResponseEntity<Object> loginGoogleUser(@RequestBody LoginRequestDto req) {
-        // TODO: Get access token and create a JWT for a session.
-        return null;
+    public ResponseEntity<?> loginGoogleUser(
+            // @RequestBody LoginRequestDto req,
+            @RequestAttribute("googleDecodedClaims") Claims googleDecodedClaims) {
+
+        if (googleDecodedClaims == null) {
+            SingleMessageDto errMsg = SingleMessageDto.builder()
+                    .message("Google decoded claims is missing!")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(errMsg);
+        }
+
+        Map<String, Object> serviceMap = authService.googleLogin(googleDecodedClaims);
+
+        return sendNewSession(serviceMap);
+    }
+
+    @PostMapping("/login/github")
+    public ResponseEntity<?> loginGithubUser(@RequestBody GitHubLoginRequestDto req) {
+
+        Map<String, Object> serviceMap = authService.githubLogin(req.getCode());
+
+        return sendNewSession(serviceMap);
     }
 
 
@@ -104,7 +126,7 @@ public class AuthController {
 
         } catch (UsernameNotFoundException e) {
             SingleMessageDto errMsg = SingleMessageDto.builder()
-                    .message("User doesn't exist, incorrect value within session cookie.")
+                    .message("User doesn't exist, incorrect subject within session cookie.")
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(errMsg);
@@ -120,7 +142,7 @@ public class AuthController {
             return sendNewSession(serviceMap);
         } catch (UsernameNotFoundException e) {
             SingleMessageDto errMsg = SingleMessageDto.builder()
-                    .message("User doesn't exist, incorrect value in refresh cookie.")
+                    .message("User doesn't exist, incorrect subject in refresh cookie.")
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(errMsg);
@@ -154,7 +176,7 @@ public class AuthController {
         return resBuilder.body(messageDto);
     }
 
-    private void clearSession(ResponseEntity.@NotNull BodyBuilder resBuilder) {
+    private static void clearSession(ResponseEntity.@NotNull BodyBuilder resBuilder) {
         ResponseCookie accessCookie = ResponseCookie.from("session", "")
                 .maxAge(0)
                 .httpOnly(true)
