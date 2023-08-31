@@ -65,7 +65,7 @@ public class VerifyRefreshTokenFilter extends OncePerRequestFilter {
         try {
             userDetails = userDetailsService.loadUserByUsername(subject);
         } catch (UsernameNotFoundException e) {
-            sendResponse(res, "User doesn't exist, incorrect value within session cookie.");
+            sendResponse(res, "User doesn't exist, incorrect value within refresh cookie.");
             return;
         }
 

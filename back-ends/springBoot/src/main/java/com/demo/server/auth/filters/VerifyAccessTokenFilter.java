@@ -76,6 +76,7 @@ public class VerifyAccessTokenFilter extends OncePerRequestFilter {
         }
 
         final String subject = jwtService.extractSubject(accessToken, ACCESS_TOKEN_SECRET);
+
         UserDetails userDetails;
         try {
             userDetails = userDetailsService.loadUserByUsername(subject);
