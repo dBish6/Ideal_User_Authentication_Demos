@@ -1,7 +1,11 @@
 import { User } from "../@types/User";
 import { PagesProps } from "../@types/PagesProps";
+
 import UsersTable from "../components/usersTable";
+import OverlayLoader from "../components/loaders/OverlayLoader";
+
 import useDocumentTitle from "../hooks/useDocumentTitle";
+
 import GetUsers from "../api_services/GetUsers";
 
 const Users = ({ title }: PagesProps) => {
@@ -11,7 +15,7 @@ const Users = ({ title }: PagesProps) => {
     <>
       <GetUsers
         render={(users: User[]) =>
-          users ? <UsersTable users={users} /> : <div>Loading...</div>
+          users.length ? <UsersTable users={users} /> : <OverlayLoader />
         }
       />
     </>
