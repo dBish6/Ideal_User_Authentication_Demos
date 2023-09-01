@@ -16,10 +16,9 @@ const GetInitializeCsrfToken = () => {
           url: "/csrf/init",
         });
         if (res && res.status === 200) {
-          // if (selectedBackEnd === "express") {
-          sessionStorage.getItem("csrf") && sessionStorage.removeItem("csrf");
-          sessionStorage.setItem("csrf", res.data.token); // This is a hashed csrf token, so it is safe to store it in localStorage.
-          // }
+          localStorage.getItem("csrf") && localStorage.removeItem("csrf");
+          localStorage.setItem("csrf", res.data.token); // This is a hashed csrf token, so it is safe to store it in localStorage.
+
           console.log("csrfTokenHashed", res.data.token);
         }
       }

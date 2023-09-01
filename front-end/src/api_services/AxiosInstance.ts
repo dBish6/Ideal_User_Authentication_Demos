@@ -22,8 +22,8 @@ const RequestHandler: RequestHandlerTypes = (options) => {
   // This happens before each request.
   instance.interceptors.request.use(
     (config) => {
-      if (sessionStorage.getItem("csrf"))
-        config.headers["X-XSRF-TOKEN"] = sessionStorage.getItem("csrf");
+      if (localStorage.getItem("csrf"))
+        config.headers["X-XSRF-TOKEN"] = localStorage.getItem("csrf");
 
       return config;
     },
@@ -80,7 +80,7 @@ const RequestHandler: RequestHandlerTypes = (options) => {
       } else if (error.message === "canceled") {
         console.warn("Request was aborted.");
       } else if (error.code === "ECONNABORTED") {
-        navigate("/error-500"); // FIXME: This is network error?
+        navigate("/error-500");
       } else {
         throw new Error(
           "A un-handled unexpected server error occurred or check connection."
