@@ -1,6 +1,7 @@
 package com.demo.server.auth.controllers;
 
 import com.demo.server.auth.dtos.*;
+import com.demo.server.auth.exceptions.UserAlreadyExistException;
 import com.demo.server.auth.model.User;
 import com.demo.server.auth.services.AuthService;
 import io.jsonwebtoken.Claims;
@@ -49,7 +50,6 @@ public class AuthController {
         HttpStatus status;
         String message;
 
-        // TODO: Move to service for third party logins.
         GetUserDto user = (GetUserDto) authService.getUser(req.getEmail().toLowerCase(), true);
         if (user != null) {
             status = HttpStatus.BAD_REQUEST;
@@ -84,33 +84,45 @@ public class AuthController {
     }
 
     @PostMapping("/login/google")
-    public ResponseEntity<?> loginGoogleUser(
-            // @RequestBody LoginRequestDto req,
-            @RequestAttribute("googleDecodedClaims") Claims googleDecodedClaims) {
-
+    public ResponseEntity<?> loginGoogleUser(@RequestAttribute("googleDecodedClaims") Claims googleDecodedClaims) {
         if (googleDecodedClaims == null) {
             SingleMessageDto errMsg = SingleMessageDto.builder()
                     .message("Google decoded claims is missing!")
                     .build();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(errMsg);
         }
 
-        Map<String, Object> serviceMap = authService.googleLogin(googleDecodedClaims);
+        try {
+            Map<String, Object> serviceMap = authService.googleLogin(googleDecodedClaims);
 
-        return sendNewSession(serviceMap);
+            return sendNewSession(serviceMap);
+        } catch (UserAlreadyExistException e) {
+            SingleMessageDto errMsg = SingleMessageDto.builder()
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errMsg);
+        }
+
     }
 
     @PostMapping("/login/github")
     public ResponseEntity<?> loginGithubUser(@RequestBody GitHubLoginRequestDto req) {
+        try {
+            Map<String, Object> serviceMap = authService.githubLogin(req.getCode());
 
-        Map<String, Object> serviceMap = authService.githubLogin(req.getCode());
-
-        return sendNewSession(serviceMap);
+            return sendNewSession(serviceMap);
+        } catch (UserAlreadyExistException e) {
+            SingleMessageDto errMsg = SingleMessageDto.builder()
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(errMsg);
+        }
     }
 
 
-    // TODO: Check why get and post here?
     @GetMapping("/checkSession")
     public ResponseEntity<?> checkSession(@CookieValue("session") String email) {
         // Checks access (session) token from cookie in VerifyAccessTokenFilter...

@@ -29,6 +29,7 @@ public class User implements UserDetails {
     private String displayName;
     private String fullName;
     private String password;
+    private String login;
     private Role role;
 
     @Override

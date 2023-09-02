@@ -2,6 +2,7 @@ package com.demo.server.auth.services;
 
 import com.demo.server.auth.dtos.GitHubUserResponseBodyDto;
 import com.demo.server.auth.dtos.GithubAccessTokenResponseDto;
+import com.demo.server.auth.exceptions.UserAlreadyExistException;
 import com.demo.server.auth.model.Role;
 import com.demo.server.auth.model.User;
 import com.demo.server.auth.utils.AuthTokens;
@@ -11,6 +12,7 @@ import com.demo.server.auth.dtos.RegisterRequestDto;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,18 +74,20 @@ public class AuthService {
                     .email(user.getUsername())
                     .displayName(user.getDisplayName())
                     .fullName(user.getFullName())
+                    .login(user.getLogin())
                     .build();
         }
 
         return null;
     }
 
-    public void register(RegisterRequestDto req) {
+    public void register(@NotNull RegisterRequestDto req) {
         User user = User.builder()
                 .email(req.getEmail())
                 .displayName(req.getDisplayName())
                 .fullName(req.getFullName())
                 .password(passwordEncoder.encode(req.getPassword()))
+                .login("email")
                 .role(new Role(Role.ROLE_USER))
                 .build();
 
@@ -102,6 +106,7 @@ public class AuthService {
                 .displayName(thirdPartyUser.getDisplayName())
                 .fullName(thirdPartyUser.getFullName())
                 .password(password)
+                .login(thirdPartyUser.getLogin())
                 .role(new Role(Role.ROLE_USER))
                 .build();
 
@@ -122,17 +127,20 @@ public class AuthService {
         return response;
     }
 
-    public Map<String, Object> googleLogin(Claims googleDecodedClaims) {
+    public Map<String, Object> googleLogin(@NotNull Claims googleDecodedClaims) {
         GetUserDto user = (GetUserDto) getUser((String) googleDecodedClaims.get("email"), false);
         if (user != null) {
+            if (!Objects.equals(user.getLogin(), "google")) {
+                throw new UserAlreadyExistException("User already exists by using " + user.getLogin() + ".");
+            }
             logger.info("Google user already exists within Redis, skipping registration.");
-            // FIXME: Same account may happen?
         } else {
             logger.info("Registering Google user.");
             user = GetUserDto.builder()
                     .email((String) googleDecodedClaims.get("email"))
                     .displayName((String) googleDecodedClaims.get("name"))
                     .fullName((String) googleDecodedClaims.get("name"))
+                    .login("google")
                     .build();
             thirdPartyUserRegister(user, true);
         }
@@ -143,7 +151,6 @@ public class AuthService {
         return response;
     }
 
-    // TODO: Refactor.
     public Map<String, Object> githubLogin(String code) throws RestClientException {
         final String githubAccessToken = getGithubUserAccessToken(code);
 
@@ -185,14 +192,17 @@ public class AuthService {
 
         GetUserDto user = (GetUserDto) getUser(email, false);
         if (user != null) {
+            if (!Objects.equals(user.getLogin(), "github")) {
+                throw new UserAlreadyExistException("User already exists by using " + user.getLogin() + ".");
+            }
             logger.info("GitHub user already exists within Redis, skipping registration.");
-            // FIXME: Same account may happen?
         } else {
             logger.info("Registering GitHub user.");
             user = GetUserDto.builder()
                     .email(email)
                     .displayName(login)
                     .fullName(name)
+                    .login("github")
                     .build();
             thirdPartyUserRegister(user, false);
         }
@@ -206,8 +216,12 @@ public class AuthService {
     private String getGithubUserAccessToken(String code) throws RestClientException {
         final RestTemplate restTemplate = new RestTemplate();
 
-        final String params = "?client_id=" + GITHUB_CLIENT_ID + "&client_secret=" + GITHUB_CLIENT_SECRET
-                + "&code=" + code;
+        final String params = String.format(
+                "?client_id=%s&client_secret=%s&code=%s",
+                GITHUB_CLIENT_ID,
+                GITHUB_CLIENT_SECRET,
+                code
+        );
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
@@ -248,6 +262,7 @@ public class AuthService {
 
         Map<String, Object> response = createTokenCookies(subject);
         response.put("user", user);
+
         return response;
     }
 
