@@ -2,6 +2,7 @@ package com.demo.server.auth.filters;
 
 import com.demo.server.auth.services.AuthService;
 import com.demo.server.auth.services.JwtService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Objects;
 
+// Handles refresh token validation and sets the user as authenticated in the SecurityContextHolder.
 @Component
 @RequiredArgsConstructor
 public class VerifyRefreshTokenFilter extends OncePerRequestFilter {
@@ -28,9 +30,6 @@ public class VerifyRefreshTokenFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final AuthService authService;
-
-    @Value("${REFRESH_TOKEN_SECRET}")
-    private String REFRESH_TOKEN_SECRET;
 
     @Override
     protected boolean shouldNotFilter(@NotNull HttpServletRequest req) {
@@ -41,7 +40,7 @@ public class VerifyRefreshTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             @NotNull HttpServletRequest req,
             @NotNull HttpServletResponse res,
-            FilterChain filterChain) throws ServletException, IOException {
+            @NotNull FilterChain filterChain) throws ServletException, IOException {
 
         Cookie[] cookies = req.getCookies();
         String refreshToken = null;
@@ -59,30 +58,29 @@ public class VerifyRefreshTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String subject = jwtService.extractSubject(refreshToken, REFRESH_TOKEN_SECRET);
+        Object isValid = jwtService.isTokenValid(refreshToken, true);
+        if (isValid instanceof Claims decodedClaims) {
+            try {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(decodedClaims.getSubject());
 
-        UserDetails userDetails;
-        try {
-            userDetails = userDetailsService.loadUserByUsername(subject);
-        } catch (UsernameNotFoundException e) {
-            sendResponse(res, "User doesn't exist, incorrect value within refresh cookie.");
-            return;
-        }
-
-        String isValid = jwtService.isTokenValid(refreshToken, userDetails, true);
-        if (Objects.equals(isValid, "valid.")) {
-            if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                authService.setAuthenticated(userDetails, req);
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    authService.setAuthenticated(userDetails, req);
+                }
+            } catch (UsernameNotFoundException e) {
+                sendResponse(res, "User doesn't exist, incorrect value within session cookie.");
+                return;
             }
         } else {
-            sendResponse(res, "Refresh token is " + isValid);
+            String isValidMsg = (String) isValid;
+            sendResponse(res, "Refresh token is " + isValidMsg);
             return;
         }
 
+        logger.info("Refresh token successfully verified.");
         filterChain.doFilter(req, res);
     }
 
-    private void sendResponse(HttpServletResponse res, String message) throws IOException {
+    private void sendResponse(@NotNull HttpServletResponse res, @NotNull String message) throws IOException {
         res.setContentType("application/json");
         if (message.contains("missing")) {
             res.setStatus(HttpStatus.UNAUTHORIZED.value());

@@ -3,6 +3,7 @@ package com.demo.server.auth.filters;
 import com.demo.server.auth.services.AuthService;
 import com.demo.server.auth.services.JwtService;
 import com.demo.server.csrf.filters.VerifyCsrfTokenFilter;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -24,7 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Objects;
 
-// Handles JWT authentication and sets the authenticated user's details in the SecurityContextHolder.
+// Handles access token validation and sets the user as authenticated in the SecurityContextHolder.
 @Component
 @RequiredArgsConstructor
 public class VerifyAccessTokenFilter extends OncePerRequestFilter {
@@ -34,9 +35,6 @@ public class VerifyAccessTokenFilter extends OncePerRequestFilter {
     private final AuthService authService;
 
     private static final Logger logger = LoggerFactory.getLogger(VerifyCsrfTokenFilter.class);
-
-    @Value("${ACCESS_TOKEN_SECRET}")
-    private String ACCESS_TOKEN_SECRET;
 
     @Override
     protected boolean shouldNotFilter(@NotNull HttpServletRequest req) {
@@ -75,30 +73,29 @@ public class VerifyAccessTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String subject = jwtService.extractSubject(accessToken, ACCESS_TOKEN_SECRET);
+        Object isValid = jwtService.isTokenValid(accessToken, false);
+        if (isValid instanceof Claims decodedClaims) {
+            try {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(decodedClaims.getSubject());
 
-        UserDetails userDetails;
-        try {
-            userDetails = userDetailsService.loadUserByUsername(subject);
-        } catch (UsernameNotFoundException e) {
-            sendResponse(res, "User doesn't exist, incorrect value within session cookie.");
-            return;
-        }
-
-        String isValid = jwtService.isTokenValid(accessToken, userDetails, false);
-        if (Objects.equals(isValid, "valid.")) {
-            if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                authService.setAuthenticated(userDetails, req);
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    authService.setAuthenticated(userDetails, req);
+                }
+            } catch (UsernameNotFoundException e) {
+                sendResponse(res, "User doesn't exist, incorrect value within session cookie.");
+                return;
             }
         } else {
-            sendResponse(res, "Access token is " + isValid);
+            String isValidMsg = (String) isValid;
+            sendResponse(res, "Access token is " + isValidMsg);
             return;
         }
 
+        logger.info("Access token successfully verified.");
         filterChain.doFilter(req, res);
     }
 
-    private void sendResponse(HttpServletResponse res, String message) throws IOException {
+    private void sendResponse(@NotNull HttpServletResponse res, @NotNull String message) throws IOException {
         res.setContentType("application/json");
         if (message.contains("missing")) {
             res.setStatus(HttpStatus.UNAUTHORIZED.value());

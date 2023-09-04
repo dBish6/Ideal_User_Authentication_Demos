@@ -1,18 +1,18 @@
 package com.demo.server.auth.services;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
 import java.util.function.Function;
 
 @Service
@@ -20,6 +20,8 @@ import java.util.function.Function;
 public class JwtService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     @Value("${ACCESS_TOKEN_SECRET}")
     private String ACCESS_TOKEN_SECRET;
@@ -49,7 +51,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyDecoded);
     }
 
-    public String isTokenValid(String token, UserDetails userDetails, boolean isRefresh) {
+    public Object isTokenValid(String token, boolean isRefresh) {
         String key;
         if (isRefresh) {
             boolean isTokenValid = Boolean.TRUE.equals(
@@ -63,15 +65,19 @@ public class JwtService {
         } else {
             key = ACCESS_TOKEN_SECRET;
         }
-        final String email = extractSubject(token, key);
-        final Date expiry = extractClaim(token, Claims::getExpiration, key);
 
-        if (!email.equals(userDetails.getUsername())) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey(key))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            logger.error(e.getMessage());
             return "invalid.";
-        } else if (expiry.before(new Date())) {
+        } catch (ExpiredJwtException e) {
+            logger.error(e.getMessage());
             return "expired.";
-        } else {
-            return "valid.";
         }
     }
 }
