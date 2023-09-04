@@ -60,16 +60,7 @@ public class VerifyCsrfTokenFilter extends OncePerRequestFilter {
             sendResponse(res, "CSRF token is missing.");
             return;
         }
-//        if (storedToken != null) {
-//            boolean match = BCrypt.checkpw(storedToken, receivedToken);
-//            if (!match) {
-//                sendResponse(res, "CSRF token does not match.");
-//                return;
-//            }
-//        } else {
-//            sendResponse(res, "CSRF token is missing.");
-//            return;
-//        }
+
         filterChain.doFilter(req, res);
     }
 
