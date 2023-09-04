@@ -3,6 +3,8 @@ package com.demo.server.utils;
 import com.demo.server.exceptions.RedisConnectionException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RedisConnectionLogger implements ApplicationListener<ContextRefreshedEvent> {
     private final RedisConnectionFactory redisConnectionFactory;
+    private static final Logger logger = LoggerFactory.getLogger(RedisConnectionLogger.class);
 
     @Override
     public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
@@ -21,21 +24,12 @@ public class RedisConnectionLogger implements ApplicationListener<ContextRefresh
     }
 
     private void testRedisConnection() {
-        System.out.println("Getting Redis server connection...");
-        RedisConnection connection = null;
-        try {
-            connection = redisConnectionFactory.getConnection();
-            if (connection != null) {
-                System.out.println("Redis server is successfully running!");
-            } else {
-                throw new RedisConnectionException("Failed to connect to Redis server.");
-            }
+        logger.info("Getting Redis server connection...");
+        try (RedisConnection connection = redisConnectionFactory.getConnection()) {
+            connection.close();
+            logger.info("Redis server is successfully running!");
         } catch (Exception e) {
             throw new RedisConnectionException("Failed to connect to Redis server.", e);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
         }
     }
 }
