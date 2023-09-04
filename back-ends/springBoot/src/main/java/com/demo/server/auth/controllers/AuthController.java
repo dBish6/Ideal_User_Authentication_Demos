@@ -32,7 +32,7 @@ public class AuthController {
     }
 
     @GetMapping("/user/{email}")
-    public ResponseEntity<?> getUser(@PathVariable String email) {
+    public ResponseEntity<?> getUser(@PathVariable @NotNull String email) {
         GetUserDto user = (GetUserDto) authService.getUser(email.toLowerCase(), false);
         if (user == null) {
             SingleMessageDto errMsg = SingleMessageDto.builder()
@@ -46,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<SingleMessageDto> registerUser(@RequestBody RegisterRequestDto req) {
+    public ResponseEntity<SingleMessageDto> registerUser(@RequestBody @NotNull RegisterRequestDto req) {
         HttpStatus status;
         String message;
 
@@ -68,14 +68,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequestDto req) {
+    public ResponseEntity<?> loginUser(@RequestBody @NotNull LoginRequestDto req) {
         try {
-            Map<String, Object> serviceMap = authService.login(req.getEmail().toLowerCase(), req.getPassword());
+            NewSessionResponseDto newSessionResponseDto = authService.login(req.getEmail().toLowerCase(), req.getPassword());
 
-            return sendNewSession(serviceMap);
+            return sendNewSession(newSessionResponseDto);
 
         } catch (BadCredentialsException e) {
-            // TODO: Upgrade.
             SingleMessageDto errMsg = SingleMessageDto.builder()
                     .message("Email or password is incorrect.")
                     .build();
@@ -94,9 +93,9 @@ public class AuthController {
         }
 
         try {
-            Map<String, Object> serviceMap = authService.googleLogin(googleDecodedClaims);
+            NewSessionResponseDto newSessionResponseDto = authService.googleLogin(googleDecodedClaims);
 
-            return sendNewSession(serviceMap);
+            return sendNewSession(newSessionResponseDto);
         } catch (UserAlreadyExistException e) {
             SingleMessageDto errMsg = SingleMessageDto.builder()
                     .message(e.getMessage())
@@ -108,11 +107,11 @@ public class AuthController {
     }
 
     @PostMapping("/login/github")
-    public ResponseEntity<?> loginGithubUser(@RequestBody GitHubLoginRequestDto req) {
+    public ResponseEntity<?> loginGithubUser(@RequestBody @NotNull GitHubLoginRequestDto req) {
         try {
-            Map<String, Object> serviceMap = authService.githubLogin(req.getCode());
+            NewSessionResponseDto newSessionResponseDto = authService.githubLogin(req.getCode());
 
-            return sendNewSession(serviceMap);
+            return sendNewSession(newSessionResponseDto);
         } catch (UserAlreadyExistException e) {
             SingleMessageDto errMsg = SingleMessageDto.builder()
                     .message(e.getMessage())
@@ -149,9 +148,9 @@ public class AuthController {
     public ResponseEntity<?> refreshSession(@CookieValue("refresh") String cookieValue) {
         // When the refresh token is verified generate the new access token.
         try {
-            Map<String, Object> serviceMap = authService.refresh(cookieValue);
+            NewSessionResponseDto newSessionResponseDto = authService.refresh(cookieValue);
 
-            return sendNewSession(serviceMap);
+            return sendNewSession(newSessionResponseDto);
         } catch (UsernameNotFoundException e) {
             SingleMessageDto errMsg = SingleMessageDto.builder()
                     .message("User doesn't exist, incorrect subject in refresh cookie.")
@@ -162,16 +161,16 @@ public class AuthController {
     }
 
     private static @NotNull ResponseEntity<LoginResponseDto> sendNewSession(
-            @NotNull Map<String, Object> loginServiceMap) {
+            @NotNull NewSessionResponseDto dto) {
 
         LoginResponseDto responseDto = LoginResponseDto.builder()
                 .message("User is successfully authenticated.")
-                .user((GetUserDto) loginServiceMap.get("user"))
+                .user(dto.getUser())
                 .build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE,
-                        String.valueOf(loginServiceMap.get("accessCookie")),
-                        String.valueOf(loginServiceMap.get("refreshCookie"))
+                        String.valueOf(dto.getAccessCookie()),
+                        String.valueOf(dto.getRefreshCookie())
                 )
                 .body(responseDto);
     }

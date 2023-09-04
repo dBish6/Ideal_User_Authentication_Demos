@@ -1,14 +1,11 @@
 package com.demo.server.auth.services;
 
-import com.demo.server.auth.dtos.GitHubUserResponseBodyDto;
-import com.demo.server.auth.dtos.GithubAccessTokenResponseDto;
+import com.demo.server.auth.dtos.*;
 import com.demo.server.auth.exceptions.UserAlreadyExistException;
 import com.demo.server.auth.model.Role;
 import com.demo.server.auth.model.User;
 import com.demo.server.auth.utils.AuthTokens;
 import com.demo.server.auth.utils.JwtTokenProvider;
-import com.demo.server.auth.dtos.GetUserDto;
-import com.demo.server.auth.dtos.RegisterRequestDto;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -113,7 +110,7 @@ public class AuthService {
         redisTemplate.opsForHash().put(KEY, user.getEmail(), user);
     }
 
-    public Map<String, Object> login(String email, String password) throws BadCredentialsException {
+    public NewSessionResponseDto login(String email, String password) throws BadCredentialsException {
         // Checks username and password.
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
@@ -121,13 +118,13 @@ public class AuthService {
 
         GetUserDto user = (GetUserDto) getUser(email, false);
 
-        Map<String, Object> response = createTokenCookies(email);
-        response.put("user", user);
+        NewSessionResponseDto dto = createTokenCookies(email);
+        dto.setUser(user);
 
-        return response;
+        return dto;
     }
 
-    public Map<String, Object> googleLogin(@NotNull Claims googleDecodedClaims) {
+    public NewSessionResponseDto googleLogin(@NotNull Claims googleDecodedClaims) {
         GetUserDto user = (GetUserDto) getUser((String) googleDecodedClaims.get("email"), false);
         if (user != null) {
             if (!Objects.equals(user.getLogin(), "google")) {
@@ -145,13 +142,13 @@ public class AuthService {
             thirdPartyUserRegister(user, true);
         }
 
-        Map<String, Object> response = createTokenCookies(user.getEmail());
-        response.put("user", user);
+        NewSessionResponseDto dto = createTokenCookies(user.getEmail());
+        dto.setUser(user);
 
-        return response;
+        return dto;
     }
 
-    public Map<String, Object> githubLogin(String code) throws RestClientException {
+    public NewSessionResponseDto githubLogin(String code) throws RestClientException {
         final String githubAccessToken = getGithubUserAccessToken(code);
 
         final RestTemplate restTemplate = new RestTemplate();
@@ -207,10 +204,10 @@ public class AuthService {
             thirdPartyUserRegister(user, false);
         }
 
-        Map<String, Object> response = createTokenCookies(user.getEmail());
-        response.put("user", user);
+        NewSessionResponseDto dto = createTokenCookies(user.getEmail());
+        dto.setUser(user);
 
-        return response;
+        return dto;
     }
 
     private String getGithubUserAccessToken(String code) throws RestClientException {
@@ -253,34 +250,28 @@ public class AuthService {
         return user;
     }
 
-    public Map<String, Object> refresh(String cookieValue) {
+    public NewSessionResponseDto refresh(String cookieValue) {
         String subject = jwtService.extractSubject(cookieValue, REFRESH_TOKEN_SECRET);
         GetUserDto user = (GetUserDto) getUser(subject, false);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
 
-        Map<String, Object> response = createTokenCookies(subject);
-        response.put("user", user);
+        NewSessionResponseDto dto = createTokenCookies(subject);
+        dto.setUser(user);
 
-        return response;
+        return dto;
     }
 
-    private Map<String, Object> createTokenCookies(String email) {
+    private NewSessionResponseDto createTokenCookies(String email) {
         final AuthTokens jsonWebToken = jwtTokenProvider.generateToken(email);
         final String accessToken = jsonWebToken.getAccess();
         final String refreshToken = jsonWebToken.getRefresh();
 
-        // TODO: Change to object.
-        Map<String, Object> response = new HashMap<>();
-        response.put("accessCookie",
-                createCookie("session", accessToken, Duration.ofMinutes(15))
-        );
-        response.put("refreshCookie",
-                createCookie("refresh", refreshToken, Duration.ofDays(9))
-        );
-
-        return response;
+        return NewSessionResponseDto.builder()
+                .accessCookie(createCookie("session", accessToken, Duration.ofMinutes(15)))
+                .refreshCookie(createCookie("refresh", refreshToken, Duration.ofDays(9)))
+                .build();
     }
 
     private static ResponseCookie createCookie(String name, String value, Duration expiry) {
