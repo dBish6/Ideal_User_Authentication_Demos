@@ -1,11 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import RequestHandler from "./AxiosInstance";
-import { useGlobalContext } from "../contexts/GlobalContext";
 
 const GetInitializeCsrfToken = () => {
-  const { instance, abortController } = RequestHandler(),
-    { selectedBackEnd } = useGlobalContext();
+  const { instance, abortController } = RequestHandler();
 
   useEffect(() => {
     const handleCsrf = async () => {
