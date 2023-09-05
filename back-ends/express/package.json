@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "David Bishop",
   "description": "The node express back-end for the user authentication demo to showcase third party OAuth and OAuth's JWT.",
-  "repository": "",
+  "repository": "https://github.com/dBish6/Ideal_User_Authentication_Demos/tree/master/back-ends/express",
   "main": "build/server.js",
   "license": "ISC",
   "scripts": {
