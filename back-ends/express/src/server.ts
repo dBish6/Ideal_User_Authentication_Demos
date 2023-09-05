@@ -58,20 +58,15 @@ app.use((req, res, next) => {
   })(req, res, next);
 });
 
-app.use(morgan("dev")); // Request logger.
-// app.use((req, res, next) => {
-//   console.log(
-//     req.method,
-//     req.url,
-//     req.hostname,
-//     req.cookies,
-//     req.headers,
-//     req.body,
-//     req.query
-//   );
-//   next();
-// });
+// Request logger.
+morgan.token("all-headers", (req) => {
+  return JSON.stringify(req.headers, null, 2);
+});
+app.use(
+  morgan(":method :url :status :response-time ms \n headers: :all-headers")
+);
 
+// *Custom*
 app.use(lowercaseEmails);
 
 // *Router*
