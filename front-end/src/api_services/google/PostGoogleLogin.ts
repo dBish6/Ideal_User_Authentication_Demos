@@ -29,20 +29,26 @@ const PostGoogleLogin = (
     }));
     // console.log("googleRes", googleRes);
 
-    const userIdToken = googleRes.credential,
-      res = await instance({
-        method: "POST",
-        url: "/auth/login/google",
-        headers: {
-          Authorization: "Bearer " + userIdToken,
-        },
-      });
-    if (res && res.status === 200) {
-      setCurrentUser({ user: res.data.user, sessionStatus: true });
-      localStorage.setItem("loggedIn", res.data.user.displayName);
-      navigate("/users");
+    try {
+      const userIdToken = googleRes.credential,
+        res = await instance({
+          method: "POST",
+          url: "/auth/login/google",
+          headers: {
+            Authorization: "Bearer " + userIdToken,
+          },
+        });
+      if (res && res.status === 200) {
+        setCurrentUser({ user: res.data.user, sessionStatus: true });
+        localStorage.setItem("loggedIn", res.data.user.displayName);
+        navigate("/users");
 
-      addToast(`Welcome back ${res.data.user.displayName}!`, "success");
+        addToast(`Welcome back ${res.data.user.displayName}!`, "success");
+      }
+    } catch (error: any) {
+      if (typeof error == "string") {
+        addToast(error, "error");
+      }
     }
 
     toggleLoading((prev) => ({

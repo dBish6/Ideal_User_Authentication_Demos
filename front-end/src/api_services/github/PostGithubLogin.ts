@@ -33,20 +33,26 @@ const PostGithubLogin = (
           register: { ...prev.register, gitHub: true },
         }));
 
-        const codeParam = new URLSearchParams(queryString).get("code"),
-          res = await instance({
-            method: "POST",
-            url: "/auth/login/github",
-            data: {
-              code: codeParam,
-            },
-          });
-        if (res && res.status === 200) {
-          setCurrentUser({ user: res.data.user, sessionStatus: true });
-          localStorage.setItem("loggedIn", res.data.user.displayName);
-          navigate("/users");
+        try {
+          const codeParam = new URLSearchParams(queryString).get("code"),
+            res = await instance({
+              method: "POST",
+              url: "/auth/login/github",
+              data: {
+                code: codeParam,
+              },
+            });
+          if (res && res.status === 200) {
+            setCurrentUser({ user: res.data.user, sessionStatus: true });
+            localStorage.setItem("loggedIn", res.data.user.displayName);
+            navigate("/users");
 
-          addToast(`Welcome back ${res.data.user.displayName}!`, "success");
+            addToast(`Welcome back ${res.data.user.displayName}!`, "success");
+          }
+        } catch (error: any) {
+          if (typeof error == "string") {
+            addToast(error, "error");
+          }
         }
 
         toggleLoading((prev) => ({
