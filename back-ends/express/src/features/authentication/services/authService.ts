@@ -4,7 +4,6 @@ import { GetUserValues } from "../../../@types/GetUserValues";
 import { GoogleIdTokenPayload } from "../../../@types/GoogleIdTokenPayload";
 
 import { hash } from "bcrypt";
-import { verify } from "jsonwebtoken";
 
 import { redisClient } from "../../../configs/redisConfig";
 
@@ -70,24 +69,28 @@ export const googleLogin = async (
   googleDecodedClaims: GoogleIdTokenPayload
 ) => {
   try {
-    const isUser = await redisClient.hExists(KEY, googleDecodedClaims.email);
-    if (isUser) {
+    const user = (await getUser(googleDecodedClaims.email)) as GetUserDto;
+    if (user) {
+      if (user.login !== "google") {
+        return `User already exists by using ${user.login}.`;
+      }
       console.log(
         "Google user already exists within Redis, skipping registration."
       );
     } else {
       console.log("Registering Google user.");
       const { email, name } = googleDecodedClaims,
-        user = {
+        registeredUser: User = {
           email,
           displayName: name,
           fullName: name,
           password: "google provided",
-        } as User;
-      await register(user, true);
+          login: "google",
+        };
+      await register(registeredUser, true);
+      return registeredUser;
     }
 
-    const user = (await getUser(googleDecodedClaims.email)) as GetUserDto;
     return user;
   } catch (error: any) {
     throw new Error("Google login service error:\n" + error.message);
@@ -103,33 +106,37 @@ export const githubLogin = async (githubAccessToken: string) => {
         },
       }),
       data = await res.json();
-    console.log("GitHub data", data);
+    // console.log("GitHub data", data);
     if (!res.ok) {
       return { githubFetchErr: data };
     } else if (data && data.id) {
       // Yes, I didn't realize that your GitHub email is private by default. This is just unfortunate,
-      // so if the email is null, resumable the email that GitHub uses in their requests if your email private.
+      // so if the email is null, resemble the email that GitHub uses in their requests if your email private.
       if (data.email === null)
         data.email = `${data.id}+${data.login}@users.noreply.github.com`;
 
       const { login, email, name } = data,
-        isUser = await redisClient.hExists(KEY, email);
-      if (isUser) {
+        user = (await getUser(data.email)) as GetUserDto;
+      if (user) {
+        if (user.login !== "github") {
+          return `User already exists by using ${user.login}.`;
+        }
         console.log(
           "GitHub user already exists within Redis, skipping registration."
         );
       } else {
         console.log("Registering GitHub user.");
-        const registeredUser = {
+        const registeredUser: User = {
           email,
           displayName: login,
           fullName: name,
           password: "github provided",
-        } as User;
+          login: "github",
+        };
         await register(registeredUser, true);
+        return registeredUser;
       }
 
-      const user = (await getUser(data.email)) as GetUserDto;
       return user;
     } else {
       return {

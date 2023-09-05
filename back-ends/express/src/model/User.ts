@@ -3,4 +3,5 @@ export default interface User {
   displayName: string;
   fullName: string;
   password: string;
+  login: "email" | "google" | "github";
 }

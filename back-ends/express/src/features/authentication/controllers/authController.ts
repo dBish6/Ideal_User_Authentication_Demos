@@ -48,6 +48,7 @@ export const register = async (
     const user = await authService.getUser(req.body.email);
     if (user) return res.status(400).json({ message: "User already exists." });
 
+    req.body.login = "email";
     await authService.register(req.body);
 
     return res
@@ -71,29 +72,37 @@ export const login = async (
   // Fetches the GitHub user's access token with the code param in getGithubUserAccessToken on /login/github request...
 
   try {
-    req.gitHubAccessToken &&
-      console.log("req.gitHubAccessToken", req.gitHubAccessToken);
-
     const user = (
       req.googleDecodedClaims
         ? await authService.googleLogin(req.googleDecodedClaims)
         : req.gitHubAccessToken
         ? await authService.githubLogin(req.gitHubAccessToken)
         : req.authUser
-    ) as GetUserDto & { githubFetchErr?: any };
-    if (user.githubFetchErr) {
+    ) as (GetUserDto & { githubFetchErr?: any }) | string;
+    if (typeof user === "string") {
+      if (user.includes("User already exists")) {
+        return res.status(409).json({
+          message: user,
+        });
+      } else {
+        // Should never happen...
+        return res.status(500).json({
+          message: "How is the user string right now!?",
+        });
+      }
+    } else if (user && user.githubFetchErr !== undefined) {
       // When requesting for the user with the GitHub access token to GitHub's api...
       if (
         typeof user.githubFetchErr === "string" &&
         user.githubFetchErr.includes("not found")
       ) {
         // On no response data.
-        return res.status(404).send({
+        return res.status(404).json({
           message: user.githubFetchErr,
         });
       } else {
         // On a bad status code.
-        return res.status(403).send({
+        return res.status(403).json({
           message: "GitHub user ID access token is invalid.",
           ERROR: user.githubFetchErr,
         });
@@ -213,7 +222,6 @@ export const logout = async (
   }
 };
 
-// TODO:
 export const deleteUser = async (
   req: Request,
   res: Response,
@@ -222,7 +230,9 @@ export const deleteUser = async (
   try {
     await authService.deleteUser(req.params.email);
 
-    // return res.status(200).json(users);
+    return res
+      .status(200)
+      .json({ message: `User ${req.params.email} was successfully deleted.` });
   } catch (error) {
     next(error);
   }
