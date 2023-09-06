@@ -56,7 +56,10 @@ export const getUser: GetUserValues = async (email, getAll) => {
 
 export const register = async (user: User, isThirdParty?: boolean) => {
   try {
-    if (!isThirdParty) user.password = await hash(user.password, 12);
+    if (!isThirdParty) {
+      user.password = await hash(user.password, 12);
+      user.login = "email";
+    }
     return redisClient.hSet(KEY, user.email, JSON.stringify(user));
   } catch (error: any) {
     throw new Error(

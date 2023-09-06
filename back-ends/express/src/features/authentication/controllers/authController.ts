@@ -48,7 +48,6 @@ export const register = async (
     const user = await authService.getUser(req.body.email);
     if (user) return res.status(400).json({ message: "User already exists." });
 
-    req.body.login = "email";
     await authService.register(req.body);
 
     return res
