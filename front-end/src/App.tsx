@@ -30,10 +30,18 @@ import { AuthContextProvider } from "./contexts/AuthContext";
 
 import ColorPropertiesOnBackendType from "./utils/ColorPropertiesOnBackendType";
 
+import GetSessionStatus from "./api_services/GetSessionStatus";
+import PostSessionRefresh from "./api_services/PostSessionRefresh";
+
 const LoginRegister = lazy(() => import("./pages/LoginRegister"));
 
 const Structure = () => {
   ColorPropertiesOnBackendType();
+
+  // Persists the session on refreshes.
+  GetSessionStatus();
+  // Refreshes user session in the background if access token is expired.
+  PostSessionRefresh();
 
   return (
     <>

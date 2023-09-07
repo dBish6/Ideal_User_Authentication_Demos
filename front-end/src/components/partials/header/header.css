@@ -19,13 +19,13 @@ header .nodeLogo {
   min-height: 104px;
 }
 
-header div:nth-last-child(1) {
+header div:nth-last-child(1):not(.loaderWrapper) {
   display: flex;
   justify-content: flex-end;
 }
 
 header .title,
-header div:nth-last-child(1) {
+header div:nth-last-child(1):not(.loaderWrapper) {
   flex: 1;
 }
 

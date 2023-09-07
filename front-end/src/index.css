@@ -16,12 +16,9 @@ html {
   background-image: url("./assets/NoiseBlobBackground.png");
   background-attachment: fixed;
   background-position: center;
-  /* background-position: left; */
   background-repeat: no-repeat;
-  /* overflow: hidden; */
 }
 
-/* TODO: Back up font. */
 body,
 input,
 button {
@@ -91,6 +88,12 @@ input {
 
 a {
   text-decoration: none;
+}
+
+@media screen and (min-width: 700px) {
+  html {
+    overflow: hidden;
+  }
 }
 
 @media screen and (max-width: 1252px) {
