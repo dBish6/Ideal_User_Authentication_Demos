@@ -4,16 +4,18 @@ import { useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 
 import { useGlobalContext } from "../contexts/GlobalContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import { springUrl, expressUrl } from "../constants/apiUrls";
 
 const RequestHandler: RequestHandlerTypes = (options) => {
   const navigate = useNavigate(),
-    { selectedBackEnd } = useGlobalContext();
+    { selectedBackEnd } = useGlobalContext(),
+    { setCurrentUser } = useAuthContext();
 
   const abortController = new AbortController(),
     instance = axios.create({
       baseURL: selectedBackEnd === "spring" ? springUrl : expressUrl,
-      timeout: 10000, // 3000
+      timeout: 10000,
       withCredentials: true,
       signal: abortController.signal,
       ...options,
@@ -38,7 +40,7 @@ const RequestHandler: RequestHandlerTypes = (options) => {
       return response;
     },
     (error: AxiosError<AxiosErrorResponse>) => {
-      abortController.abort();
+      error.response?.status !== 403 && abortController.abort();
 
       if (error.response) {
         const errorMessage = error.response.data.message;
@@ -49,7 +51,7 @@ const RequestHandler: RequestHandlerTypes = (options) => {
             errorMessage === "Email or password is incorrect." ||
             errorMessage === "Incorrect email." ||
             errorMessage === "Incorrect password." ||
-            errorMessage.includes("google user")
+            errorMessage.includes("user was found") // from when a google or github user is found.
           ) {
             throw errorMessage;
           }
@@ -60,26 +62,53 @@ const RequestHandler: RequestHandlerTypes = (options) => {
           if (errorMessage) {
             // Forbidden Messages
             if (errorMessage === "Access token is expired.") {
+              setCurrentUser((prev) => ({ ...prev, sessionStatus: false }));
+
               throw errorMessage;
             } else if (errorMessage.startsWith("CSRF token")) {
               navigate("/error-403");
-              throw errorMessage;
+            } else {
+              navigate("/error-403");
+              instance({
+                method: "POST",
+                url: "/auth/logout",
+              }).then((res) => {
+                if (res && res.status === 200) {
+                  setCurrentUser({ user: null, sessionStatus: null });
+                  localStorage.removeItem("loggedIn");
+                }
+              });
             }
           } else {
             navigate("/error-403");
+            instance({
+              method: "POST",
+              url: "/auth/logout",
+            }).then((res) => {
+              if (res && res.status === 200) {
+                setCurrentUser({ user: null, sessionStatus: null });
+                localStorage.removeItem("loggedIn");
+              }
+            });
           }
-        } else if (
-          error.response.status === 404 &&
-          errorMessage &&
-          errorMessage.includes("incorrect subject")
-        ) {
-          navigate("/error500");
-        } else if (error.code === "NETWORK ERROR") {
-          navigate("/error-500");
+        } else if (error.response.status === 404) {
+          if (errorMessage) {
+            if (
+              errorMessage.includes("incorrect subject") ||
+              errorMessage.includes("decoded claims")
+            ) {
+              navigate("/error500");
+            }
+          }
+        } else if (error.response.status === 409 && errorMessage) {
+          throw errorMessage;
         }
       } else if (error.message === "canceled") {
         console.warn("Request was aborted.");
-      } else if (error.code === "ECONNABORTED") {
+      } else if (
+        error.code === "ECONNABORTED" ||
+        error.code === "NETWORK ERROR"
+      ) {
         navigate("/error-500");
       } else {
         throw new Error(

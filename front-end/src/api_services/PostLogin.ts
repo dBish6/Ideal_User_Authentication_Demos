@@ -6,11 +6,10 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { useToastContext } from "../contexts/ToastContext";
 
 const PostLogin = (setError: UseFormSetError<LoginFormValues>) => {
-  const navigate = useNavigate(),
-    addToast = useToastContext();
-
   const { instance } = RequestHandler(),
-    { setCurrentUser } = useAuthContext();
+    { setCurrentUser } = useAuthContext(),
+    navigate = useNavigate(),
+    addToast = useToastContext();
 
   const handleLogin = async (
     user: LoginFormValues,
@@ -47,12 +46,8 @@ const PostLogin = (setError: UseFormSetError<LoginFormValues>) => {
             type: "manual",
             message: error,
           });
-        } else if (error.includes("Google user")) {
-          setError("root", {
-            type: "manual",
-            message: error,
-          });
-        } else if (error.includes("GitHub user")) {
+        } else if (error.includes("user was found")) {
+          // from when a google or github user is found.
           setError("root", {
             type: "manual",
             message: error,

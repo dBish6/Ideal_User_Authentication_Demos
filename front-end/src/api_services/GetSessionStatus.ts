@@ -3,40 +3,26 @@ import { CurrentUser } from "../@types/CurrentUser";
 import { useEffect } from "react";
 import RequestHandler from "./AxiosInstance";
 import { useGlobalContext } from "../contexts/GlobalContext";
+import { useAuthContext } from "../contexts/AuthContext";
 
-const GetSessionStatus = (
-  currentUser: CurrentUser,
-  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser>>,
-  logOutUser: () => Promise<void>
-) => {
+const GetSessionStatus = () => {
   const { instance, abortController } = RequestHandler(),
-    { selectedBackEnd } = useGlobalContext();
+    { selectedBackEnd } = useGlobalContext(),
+    { currentUser, setCurrentUser } = useAuthContext();
 
   useEffect(() => {
     const handleCheck = async () => {
-      if (currentUser.sessionStatus === true && selectedBackEnd) {
-        try {
-          const res = await instance({
-            method: "GET",
-            url: "/auth/checkSession",
-          });
-          if (res && res.status === 200)
-            setCurrentUser({ user: res.data.user, sessionStatus: true });
-        } catch (error: any) {
-          // FIXME: Why am I only checking for expired here??
-          // const errorMessage = error as string;
-          if (typeof error == "string" && error.includes("expired")) {
-            setCurrentUser((prev) => ({ ...prev, sessionStatus: false }));
-          } else {
-            // Even when a error happens try to get this user out of here.
-            if (
-              // !errorMessage.includes("CSRF") &&
-              currentUser.sessionStatus === true
-            ) {
-              await logOutUser();
-            }
-          }
-        }
+      if (
+        currentUser.sessionStatus === true &&
+        selectedBackEnd &&
+        window.location.pathname !== "/login-register"
+      ) {
+        const res = await instance({
+          method: "GET",
+          url: "/auth/checkSession",
+        });
+        if (res && res.status === 200)
+          setCurrentUser({ user: res.data.user, sessionStatus: true });
       }
     };
     handleCheck();
