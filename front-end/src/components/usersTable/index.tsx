@@ -1,14 +1,18 @@
 import { User } from "../../@types/User";
+import { useState } from "react";
 
 import "./usersTable.css";
 import trashCan from "../../assets/icons/Delete.svg";
+
+import Spinner from "../loaders/Spinner";
 
 import { useGlobalContext } from "../../contexts/GlobalContext";
 
 import DeleteUser from "../../api_services/DeleteUser";
 
 const UsersTable = ({ users }: { users: User[] }) => {
-  const { selectedBackEnd } = useGlobalContext(),
+  const [loading, toggleLoading] = useState<Record<string, boolean>>({}),
+    { selectedBackEnd } = useGlobalContext(),
     handleDelete = DeleteUser();
 
   return (
@@ -39,8 +43,19 @@ const UsersTable = ({ users }: { users: User[] }) => {
             <td>
               <span>Name:</span>
               {user.fullName}
-              <button onClick={() => handleDelete(user)}>
-                <img src={trashCan} alt="Delete User" />
+              <button
+                onClick={() => {
+                  toggleLoading((prev) => ({ ...prev, [user.email]: true }));
+                  handleDelete(user).finally(() =>
+                    toggleLoading((prev) => ({ ...prev, [user.email]: false }))
+                  );
+                }}
+              >
+                {loading[user.email] ? (
+                  <Spinner />
+                ) : (
+                  <img src={trashCan} alt="Delete User" />
+                )}
               </button>
             </td>
           </tr>
