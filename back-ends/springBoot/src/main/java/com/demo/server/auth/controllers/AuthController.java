@@ -79,6 +79,11 @@ public class AuthController {
                     .message("Email or password is incorrect.")
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errMsg);
+        } catch (UserAlreadyExistException e) {
+            SingleMessageDto errMsg = SingleMessageDto.builder()
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errMsg);
         }
     }
 

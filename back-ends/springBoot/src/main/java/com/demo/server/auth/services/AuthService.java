@@ -111,12 +111,18 @@ public class AuthService {
     }
 
     public NewSessionResponseDto login(String email, String password) throws BadCredentialsException {
+        final GetUserDto user = (GetUserDto) getUser(email, false);
+        final String login = user.getLogin();
+        if (!Objects.equals(user.getLogin(), "email")) {
+            throw new UserAlreadyExistException(
+                    "A " + login + " user was found, please " + "\"Use " + login + "\" to log in."
+            );
+        }
+
         // Checks username and password.
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
         );
-
-        GetUserDto user = (GetUserDto) getUser(email, false);
 
         NewSessionResponseDto dto = createTokenCookies(email);
         dto.setUser(user);
