@@ -3,6 +3,8 @@ table {
   border-collapse: collapse;
   max-width: 925px;
   width: 100%;
+  /* FIXME: */
+  /* overflow: scroll; */
 }
 
 table caption {
@@ -51,7 +53,6 @@ table thead tr th {
 
 table tbody tr td {
   position: relative;
-  /* FIXME: */
   max-width: 200px;
   padding: 0.5rem;
   color: #444444;
@@ -78,15 +79,11 @@ table tbody tr td:nth-child(3n) button {
   height: 100%;
 }
 
-/* table tbody tr td:nth-child(3n) button img {
-  display: none;
-} */
-
 table tbody tr td span {
   display: none;
 }
 
-/* FIXME: Check. */
+/* FIXME: */
 @media screen and (max-width: 511px) {
   table {
     min-width: 200px;
@@ -100,16 +97,10 @@ table tbody tr td span {
     display: grid;
     grid-template-columns: 13ch auto;
     font-size: 0.875rem;
-    /* font-size: clamp(
-      0.6875rem,
-      0.3733638743455497rem + 1.5706806282722516vw,
-      0.875rem
-    ); */
     max-width: 100%;
   }
   table tbody tr td span {
     display: inline-block;
-    /* font-size: 0.875rem; */
     font-weight: 600;
   }
 }
