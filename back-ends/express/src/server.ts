@@ -29,7 +29,22 @@ const PORT = Number(process.env.PORT),
   baseUrl = "/express/api";
 
 (async () => {
-  await redisClient.connect();
+  let retries = 5;
+
+  while (retries) {
+    try {
+      await redisClient.connect();
+      break;
+    } catch (error) {
+      console.log(error);
+
+      retries -= 1;
+      console.log(
+        `Redis connection failed. Retrying connection; ${retries} retries left.`
+      );
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
 })();
 
 // **Middleware**
