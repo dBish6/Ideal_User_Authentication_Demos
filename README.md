@@ -23,7 +23,21 @@ The authentication flow for both of the back-ends I tried to keep the same, so t
 5. **Refresh Token Validation:** Once the refresh token is validated, and if it matches a refresh token in the Redis cache, a new set of access and refresh tokens is generated. These tokens are provided along with their corresponding cookies to establish a new login session.
 
 ### Third Party Logins
+The third party logins, `Google` and `GitHub` follows the same process by creating access and refresh tokens, but with a few additional steps and again, this process is the same for both back-ends. I also made it so the login and register can happen at the same time, so ther is no need to register with a third party and then press login, I did it all in the same go.
 
+Both `Google` and `GitHub` third-party logins follow the same process of creating access and refresh tokens, with slight variations. Notably, how user registration and login can occur in a single step, making for a better user experience.
+
+### Google
+For the Google login, I use the new google-oauth-gsi dependency on the front-end, optimizing bundle size, perfect for if you are just using Google's OAuth service. So, when the user logs in with Google, Google then sends back the user credentials, including an ID token (JWT). This ID token is extracted from the credentials and sent in the login request to the server. The server then verifies the user's ID token, in a different way than you might expect. Instead of using the huge Google dependency that Google states in their documentation for verifying an ID token, I instead just used the JWT dependency that I already had installed which can already verify JWT's and used the Jwk library to get the unique Google public key to use as the signature when verifying the Id token. Upon successful ID token verification, the extracted decoded claims (credentials) are attached to the request body for further use elsewhere in the server. The server then proceeds to create a session for the user, first checking if the user already exists, if so just log in the user, if not then register the user and then log them in, this also creates a better user experience.
+
+_**Remember**_
+For the Google login to work locally, you'll have to obtain your own `client ID` and `secret`; [https://developers.google.com/identity/protocols/oauth2](https://developers.google.com/identity/protocols/oauth2).
+
+### Github
+GitHub login involves several requests to GitHub's API. First on the front-end, when the user logs in with Github, the user is redirected to Github's OAuth login page. Upon return, a 'code' query string is attached to the URL. I then take that code parameter from the query string on the URL and send it along in the login request to the server. The server uses this code parameter to request the user's access token from GitHub, that access token is then used for further requests to GitHub on behalf of the user. Lastly, session creation starts, I use that access token to fetch the Github user in another request and check if the user already exists, if so just log in the user, if not then register the user and then log them in, ensuring a seamless experience.
+
+_**Remember**_
+For the Github login to work locally, create your own 'OAuth App' on github.com and obtain your own `client ID` and `secret`; [https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app).
 
 ## Please Note
 I refer to this as an 'ideal' authentication flow, but it's important to note that the choices made here are based on general best practices. One aspect to consider is the use of the email as the unique identifier for users, which might not always be the best choice. However, for consistency and simplicity, I've chosen this approach. If you don't like using the email, you can just switch the unique identifier to an ID.
