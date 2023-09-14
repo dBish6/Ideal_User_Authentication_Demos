@@ -55,6 +55,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: ["http://localhost:3000"],
+    allowedHeaders: ["ACCEPT", "CONTENT_TYPE", "AUTHORIZATION", "X-XSRF-TOKEN"],
     credentials: true,
   })
 );
@@ -88,8 +89,8 @@ app.use(lowercaseEmails);
 app.use(`${baseUrl}/auth`, authRouter);
 app.use(`${baseUrl}/csrf`, csrfRouter);
 
-app.listen(PORT, "localhost", () =>
+app.listen(PORT, process.env.HOST as string, () =>
   console.log(
-    `Server is running on http://localhost:${PORT}; Ctrl-C to terminate...`
+    `Server is running on ${process.env.PROTOCOL}${process.env.HOST}:${PORT}; Ctrl-C to terminate...`
   )
 );

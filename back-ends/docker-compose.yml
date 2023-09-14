@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - cache:/data
+
+  express:
+    build:
+      context: ./express
+    depends_on:
+      - redis
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+    ports:
+      - "4000:4000"
+
+  springboot:
+    build:
+      context: ./springBoot
+    depends_on:
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - REDIS_HOST=redis
+    ports:
+      - "8080:8080"
+
+volumes:
+  cache:
+    driver: local
