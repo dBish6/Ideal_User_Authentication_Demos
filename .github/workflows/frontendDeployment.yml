@@ -16,7 +16,7 @@ concurrency:
 
 defaults:
   run:
-    working-directory: web
+    working-directory: ./front-end
 
 jobs:
   # Single deploy job since we're just deploying
@@ -33,12 +33,10 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          path: "front-end"
-          node-version: 18
+          node-version: 20
           cache: "npm"
 
       - name: Build App
-        working-directory: ./front-end
         run: |
           npm ci
           npm run build
