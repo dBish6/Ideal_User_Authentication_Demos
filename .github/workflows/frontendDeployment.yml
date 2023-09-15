@@ -63,8 +63,8 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload build repository
-          path: "front-end/front-end/build"
-          # path: "front-end"
+          # path: "front-end/build"
+          path: "front-end"
 
       - name: Deploy to GitHub Pages
         id: deployment
