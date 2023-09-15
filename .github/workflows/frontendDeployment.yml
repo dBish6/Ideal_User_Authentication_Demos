@@ -27,7 +27,7 @@ jobs:
           path: "front-end"
       
       - name: Copy Lock File
-        run: cp ./front-end/package-lock.json .
+        run: cp front-end/package-lock.json .
 
       - name: Set up Node
         uses: actions/setup-node@v3
