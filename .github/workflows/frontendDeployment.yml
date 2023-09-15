@@ -33,8 +33,8 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-        with:
-          path: "front-end"
+        # with:
+        #   path: "front-end"
 
       - name: Set up Node
         uses: actions/setup-node@v3
@@ -46,9 +46,12 @@ jobs:
       - name: Build App
         # working-directory: ./front-end
         run: |
-          cd front-end
           npm ci
           CI=false npm run build
+        # run: |
+        #   cd front-end
+        #   npm ci
+        #   CI=false npm run build
         # I set CI to false because CRA is crap and there are a ton of deprecated warnings.
 
       - name: Setup Pages
@@ -56,15 +59,18 @@ jobs:
 
       - name: List Front-end Directory
         run: |
-          cd front-end
           ls
-
+        # run: |
+        #   cd front-end
+        #   ls
+          
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload build repository
           # path: "front-end/build"
-          path: "front-end"
+          # path: "**/front-end"
+           path: "build"
 
       - name: Deploy to GitHub Pages
         id: deployment
