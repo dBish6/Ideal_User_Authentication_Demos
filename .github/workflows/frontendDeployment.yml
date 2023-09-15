@@ -53,7 +53,7 @@ jobs:
         with:
           # Upload build repository
           # path: "front-end/build"
-          path: "**/build"
+          path: "front-end"
 
       - name: Deploy to GitHub Pages
         id: deployment
