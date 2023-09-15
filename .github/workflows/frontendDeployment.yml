@@ -44,8 +44,9 @@ jobs:
         uses: actions/configure-pages@v3
 
       - name: List Front-end Directory
-        working-directory: ./front-end
-        run: ls -l
+        run: |
+          cd frontend
+          ls
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
