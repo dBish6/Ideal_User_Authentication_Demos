@@ -14,10 +14,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
-defaults:
-  run:
-    working-directory: ./front-end
-
 jobs:
   # Single deploy job since we're just deploying
   deploy:
@@ -35,8 +31,10 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+          cache-dependency-path: front-end/package-lock.json
 
       - name: Build App
+        working-directory: ./front-end
         run: |
           npm ci
           npm run build
