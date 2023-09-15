@@ -45,10 +45,7 @@ jobs:
       - name: Build App
         run: |
           npm ci
-          CI=false npm run build && shx cp build/index.html build/404.html
-        # run: |
-        #   npm ci
-        #   CI=false npm run build
+          CI=false npm run build
         # I set CI to false because CRA is crap and there are a ton of deprecated warnings.
 
       - name: Setup Pages
