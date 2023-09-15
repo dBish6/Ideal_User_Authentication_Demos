@@ -45,7 +45,7 @@ jobs:
       - name: Build App
         run: |
           npm ci
-          CI=false react-scripts build && shx cp build/index.html build/404.html
+          CI=false npm run build && shx cp build/index.html build/404.html
         # run: |
         #   npm ci
         #   CI=false npm run build
