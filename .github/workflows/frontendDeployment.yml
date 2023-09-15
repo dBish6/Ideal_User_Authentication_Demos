@@ -70,7 +70,7 @@ jobs:
           # Upload build repository
           # path: "front-end/build"
           # path: "**/front-end"
-           path: "build"
+           path: "front-end/build"
 
       - name: Deploy to GitHub Pages
         id: deployment
