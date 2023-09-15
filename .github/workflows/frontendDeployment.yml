@@ -1,0 +1,55 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: React (SPA)
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["master"]
+    paths:
+      - "front-end"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: "front-end"
+          
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "npm"
+          
+      - name: Build App
+        working-directory: ./front-end
+        run: |
+          npm ci
+          npm run build
+          npm run test
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload build repository
+          path: "front-end/build"
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
