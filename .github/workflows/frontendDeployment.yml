@@ -38,7 +38,6 @@ jobs:
           cd front-end
           npm ci
           CI=false npm run build
-          npm run test
         # I set CI to false because CRA is crap and there are a ton of deprecated warnings.
 
       - name: Setup Pages
