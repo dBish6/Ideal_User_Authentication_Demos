@@ -4,6 +4,7 @@
   "author": "David Bishop",
   "description": "The user interface for a demo that implements the 'ideal' way of user authentication with Java Spring Boot and Node.",
   "repository": "https://github.com/dBish6/Ideal_User_Authentication_Demos/tree/master/front-end",
+  "homepage": "https://dbish6.github.io/Ideal_User_Authentication_Demos/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
