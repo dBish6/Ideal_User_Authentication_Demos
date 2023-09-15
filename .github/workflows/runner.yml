@@ -1,0 +1,6 @@
+name: Deploy Runner
+
+on:
+  workflow_run:
+    workflows: ["React (SPA)"]
+    types: [requested]
