@@ -29,13 +29,13 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
+          path: "front-end"
           node-version: 18
           cache: "npm"
 
       - name: Build App
         working-directory: ./front-end
         run: |
-          cd ./front-end
           npm ci
           npm run build
           npm run test
