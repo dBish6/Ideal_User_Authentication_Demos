@@ -36,8 +36,10 @@ jobs:
       - name: Build App
         working-directory: ./front-end
         run: |
-          npm ci --prefix ./front-end
-          npm run build --prefix ./front-end
+          cd ./front-end
+          npm ci
+          npm run build
+          npm run test
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
