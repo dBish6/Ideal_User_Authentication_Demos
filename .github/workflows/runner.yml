@@ -4,3 +4,7 @@ on:
   workflow_run:
     workflows: ["React (SPA)"]
     types: [requested]
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
