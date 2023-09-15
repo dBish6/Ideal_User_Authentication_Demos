@@ -182,7 +182,6 @@ dist
 .svelte-kit
 
 # Other
-.github
 .prettierignore
 *.old
 OAuthIds.txt
