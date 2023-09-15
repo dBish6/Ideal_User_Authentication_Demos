@@ -25,13 +25,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           path: "front-end"
-          
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "npm"
-          
+
       - name: Build App
         working-directory: ./front-end
         run: |
@@ -39,16 +39,19 @@ jobs:
           npm ci
           npm run build
           npm run test
-          
+
+      - name: Copy Lock File
+        run: cp ./front-end/package-lock.json .
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
-        
+
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload build repository
           path: "front-end/build"
-          
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
