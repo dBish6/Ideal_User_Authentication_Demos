@@ -58,7 +58,13 @@ const Structure = () => {
 
 function App() {
   return (
-    <BrowserRouter basename={"/Ideal_User_Authentication_Demos"}>
+    <BrowserRouter
+      basename={
+        process.env.NODE_ENV === "production"
+          ? "/Ideal_User_Authentication_Demos"
+          : ""
+      }
+    >
       <Suspense fallback={<OverlayLoader />}>
         <AuthContextProvider>
           <Routes>
