@@ -23,11 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          path: "front-end"
-      
+
       - name: Copy Lock File
-        run: cp front-end/package-lock.json .
+        run: cp ./front-end/package-lock.json .
 
       - name: Set up Node
         uses: actions/setup-node@v3
