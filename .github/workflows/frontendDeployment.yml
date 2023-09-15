@@ -36,13 +36,8 @@ jobs:
       - name: Build App
         working-directory: ./front-end
         run: |
-          cd front-end
-          npm ci
-          npm run build
-          npm run test
-
-      - name: Copy Lock File
-        run: cp ./front-end/package-lock.json .
+          npm ci --prefix ./front-end
+          npm run build --prefix ./front-end
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
