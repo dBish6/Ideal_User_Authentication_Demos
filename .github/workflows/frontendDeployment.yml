@@ -45,7 +45,7 @@ jobs:
 
       - name: List Front-end Directory
         run: |
-          cd frontend
+          cd front-end
           ls
 
       - name: Upload Artifact
