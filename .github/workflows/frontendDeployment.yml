@@ -35,6 +35,7 @@ jobs:
       - name: Build App
         working-directory: ./front-end
         run: |
+          cd front-end
           npm ci
           npm run build
           npm run test
