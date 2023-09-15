@@ -2,6 +2,8 @@
 name: React (SPA)
 
 on:
+  workflow_dispatch:
+    workflows: ["front-end/.github/workflows/frontendDeployment.yml"]
   # Runs on pushes targeting the default branch
   push:
     branches: ["master"]
