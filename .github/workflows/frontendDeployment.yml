@@ -33,8 +33,6 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-        # with:
-        #   path: "front-end"
 
       - name: Set up Node
         uses: actions/setup-node@v3
