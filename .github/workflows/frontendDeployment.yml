@@ -42,7 +42,6 @@ jobs:
           cache-dependency-path: "**/package-lock.json"
 
       - name: Build App
-        # working-directory: ./front-end
         run: |
           npm ci
           CI=false npm run build
