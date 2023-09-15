@@ -39,16 +39,13 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-          cache-dependency-path: "**/package-lock.json"
-
+          # cache-dependency-path: "**/package-lock.json"
+          cache-dependency-path: "front-end/package-lock.json"
+      
       - name: Build App
         run: |
           npm ci
           CI=false npm run build
-        # run: |
-        #   cd front-end
-        #   npm ci
-        #   CI=false npm run build
         # I set CI to false because CRA is crap and there are a ton of deprecated warnings.
 
       - name: Setup Pages
@@ -57,16 +54,10 @@ jobs:
       - name: List Front-end Directory
         run: |
           ls
-        # run: |
-        #   cd front-end
-        #   ls
           
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload build repository
-          # path: "front-end/build"
-          # path: "**/front-end"
            path: "front-end/build"
 
       - name: Deploy to GitHub Pages
