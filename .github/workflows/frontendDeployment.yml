@@ -37,7 +37,7 @@ jobs:
         working-directory: ./front-end
         run: |
           cd front-end
-          npm ci
+          npm install
           npm run build
           npm run test
 
