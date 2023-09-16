@@ -2,20 +2,22 @@
 name: React (SPA)
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the default branch that's only related to the front-end folder.
   push:
-    branches: ["master", "test"]
+    branches: ["master"]
+    paths: 
+      - "front-end/**"
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually from the Actions tab.
   workflow_dispatch:
 
-# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
+# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages.
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
+# Allows only one deployment at a time.
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -39,14 +41,13 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-          # cache-dependency-path: "**/package-lock.json"
           cache-dependency-path: "front-end/package-lock.json"
       
       - name: Build App
         run: |
           npm ci
           CI=false npm run build
-        # I set CI to false because CRA is crap and there are a ton of deprecated warnings.
+        # I set CI to false here because CRA is crap and there are a ton of deprecated warnings with it.
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
