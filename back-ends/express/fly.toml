@@ -1,0 +1,30 @@
+# fly.toml app configuration file generated for auth-demo-express on 2023-09-14T20:25:10-02:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "auth-demo-express"
+primary_region = "yul"
+
+[build]
+  dockerfile = "./Dockerfile"
+  ignorefile = "./.dockerignore"
+
+[env]
+  NODE_ENV = "production"
+  HOST = "0.0.0.0"
+  PORT = "4001"
+  PROTOCOL = "https://"
+  REDIS_HOST = "fly-auth-demo-express-redis.upstash.io"
+
+[http_service]
+  internal_port = 4001
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 40
+    soft_limit = 30

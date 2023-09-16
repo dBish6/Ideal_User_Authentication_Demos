@@ -11,9 +11,7 @@ RUN npm run build
 FROM node:20-bullseye-slim as ts-remover
 WORKDIR /usr/src/app
 COPY --from=ts-compiler /usr/src/app/package*.json ./
-
 COPY --from=ts-compiler /usr/src/app/.env ./
-
 COPY --from=ts-compiler /usr/src/app/build ./
 RUN npm install --only=production
 
