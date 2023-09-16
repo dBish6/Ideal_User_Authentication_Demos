@@ -69,15 +69,17 @@ const RequestHandler: RequestHandlerTypes = (options) => {
               navigate("/error-403");
             } else {
               navigate("/error-403");
-              instance({
-                method: "POST",
-                url: "/auth/logout",
-              }).then((res) => {
-                if (res && res.status === 200) {
-                  setCurrentUser({ user: null, sessionStatus: null });
-                  localStorage.removeItem("loggedIn");
-                }
-              });
+              if (error.config && !error.config.url?.includes("logout")) {
+                instance({
+                  method: "POST",
+                  url: "/auth/logout",
+                }).then((res) => {
+                  if (res && res.status === 200) {
+                    setCurrentUser({ user: null, sessionStatus: null });
+                    localStorage.removeItem("loggedIn");
+                  }
+                });
+              }
             }
           } else {
             navigate("/error-403");

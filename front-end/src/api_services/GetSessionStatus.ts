@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { CurrentUser } from "../@types/CurrentUser";
 import { useEffect } from "react";
 import RequestHandler from "./AxiosInstance";
 import { useGlobalContext } from "../contexts/GlobalContext";
