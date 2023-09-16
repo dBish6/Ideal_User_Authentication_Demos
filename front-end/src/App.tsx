@@ -58,7 +58,13 @@ const Structure = () => {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      basename={
+        process.env.NODE_ENV === "production"
+          ? "/Ideal_User_Authentication_Demos"
+          : ""
+      }
+    >
       <Suspense fallback={<OverlayLoader />}>
         <AuthContextProvider>
           <Routes>
@@ -88,7 +94,7 @@ function App() {
               <Route path="/error-403" element={<Error403 title="ERROR" />} />
               <Route path="/error-404" element={<Error404 title="ERROR" />} />
               <Route path="/error-500" element={<Error500 title="ERROR" />} />
-              <Route path="*" element={<Navigate to="/error-404" />} />
+              {/* <Route path="*" element={<Navigate to="/error-404" />} /> */}
             </Route>
           </Routes>
         </AuthContextProvider>

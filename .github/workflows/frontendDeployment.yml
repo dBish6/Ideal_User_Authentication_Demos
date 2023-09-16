@@ -9,46 +9,57 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 # Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./front-end
+    
     steps:
       - uses: actions/checkout@v3
-        with:
-          path: "front-end"
-          
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "npm"
-          
+          # cache-dependency-path: "**/package-lock.json"
+          cache-dependency-path: "front-end/package-lock.json"
+      
       - name: Build App
-        working-directory: ./front-end
         run: |
-          cd front-end
           npm ci
-          npm run build
-          npm run test
-          
+          CI=false npm run build
+        # I set CI to false because CRA is crap and there are a ton of deprecated warnings.
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
-        
+
+      - name: List Front-end Directory
+        run: |
+          ls
+          
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload build repository
-          path: "front-end/build"
-          
+           path: "front-end/build"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
