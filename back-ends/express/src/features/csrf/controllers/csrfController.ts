@@ -16,7 +16,7 @@ export const initializeCsrfToken = async (
         path: "/",
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
       })
       .status(200)
       .json({

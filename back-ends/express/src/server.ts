@@ -47,6 +47,8 @@ const PORT = Number(process.env.PORT),
   }
 })();
 
+app.set("trust proxy", 1);
+
 // **Middleware**
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -54,8 +56,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
-    allowedHeaders: ["ACCEPT", "CONTENT_TYPE", "AUTHORIZATION", "X-XSRF-TOKEN"],
+    origin: ["http://localhost:3000", "https://dbish6.github.io"],
     credentials: true,
   })
 );
@@ -68,7 +69,7 @@ app.use(hpp()); // Protects against HTTP Parameter Pollution attacks.
 app.use((req, res, next) => {
   rateLimit({
     windowMs: 60 * 60 * 1000, // 60 Minutes
-    max: 75, // limit each IP to 75 requests per windowMs.
+    max: 55, // limit each IP to 55 requests per windowMs.
     message:
       "Too many requests made from this IP, please try again after an hour.",
   })(req, res, next);

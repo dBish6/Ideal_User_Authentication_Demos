@@ -1,7 +1,10 @@
 import { createClient } from "@redis/client";
 
 export const redisClient = createClient({
-  url: `redis://${process.env.REDIS_HOST}:6379`,
+  url:
+    process.env.NODE_ENV === "production"
+      ? `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:6379`
+      : `redis://${process.env.REDIS_HOST}:6379`,
 });
 
 redisClient.on("connect", () => {
