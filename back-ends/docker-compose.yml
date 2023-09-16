@@ -14,7 +14,6 @@ services:
     depends_on:
       - redis
     environment:
-      - NODE_ENV=production
       - REDIS_HOST=redis
     ports:
       - "4000:4000"
@@ -25,7 +24,6 @@ services:
     depends_on:
       - redis
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
       - REDIS_HOST=redis
     ports:
       - "8080:8080"
