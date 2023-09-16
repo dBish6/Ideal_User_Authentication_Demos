@@ -1,7 +1,6 @@
 package com.demo.server.csrf.controllers;
 
 import com.demo.server.csrf.dtos.csrfInitResponseDto;
-import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class CsrfController {
         ResponseCookie cookie = ResponseCookie.from("XSRF-TOKEN", token.toString())
                 .httpOnly(true)
                 .secure(true)
-                .sameSite(Cookie.SameSite.STRICT.attributeValue())
+                .sameSite("None")
                 .path("/")
                 .build();
 

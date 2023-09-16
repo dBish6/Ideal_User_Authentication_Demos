@@ -37,6 +37,7 @@ public class SecurityConfig {
         http.cors(cors -> {
             CorsConfiguration config = new CorsConfiguration();
             config.addAllowedOrigin("http://localhost:3000");
+            config.addAllowedOrigin("https://dbish6.github.io/Ideal_User_Authentication_Demos/");
             config.setMaxAge(3600L);
             config.setAllowedMethods(Arrays.asList(
                     HttpMethod.GET.name(),

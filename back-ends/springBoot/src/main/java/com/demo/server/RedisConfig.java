@@ -12,10 +12,17 @@ public class RedisConfig {
 
     @Value("${REDIS_HOST}")
     private String REDIS_HOST;
+    @Value("${REDIS_PASSWORD}")
+    private String REDIS_PASSWORD;
+    @Value("${spring.profiles.active}")
+    private String profile;
 
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory() {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration(REDIS_HOST, 6379);
+        if (profile.equals("prod")) {
+            redisConfiguration.setPassword(REDIS_PASSWORD);
+        }
         return new LettuceConnectionFactory(redisConfiguration);
     }
 
