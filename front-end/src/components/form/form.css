@@ -225,7 +225,8 @@
   text-decoration-color: var(--hTxt);
 }
 
-.formWrapper .formFooter p:active {
+.formWrapper .formFooter p:active,
+.formWrapper .formFooter p.selected {
   top: 1px;
 }
 
