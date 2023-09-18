@@ -4,9 +4,9 @@ name: React (SPA)
 on:
   # Runs on pushes targeting the default branch that's only related to the front-end folder.
   push:
-    branches: ["master", "test2"]
-    # paths:
-    #   - "front-end/**"
+    branches: ["master"]
+    paths:
+      - "front-end/**"
 
   # Allows you to run this workflow manually from the Actions tab.
   workflow_dispatch:
