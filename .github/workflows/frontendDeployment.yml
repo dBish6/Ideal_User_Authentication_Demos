@@ -44,6 +44,9 @@ jobs:
           cache-dependency-path: "front-end/package-lock.json"
 
       - name: Build App
+        env:
+          REACT_APP_GOOGLE_CLIENT_ID: ${{ secrets.REACT_APP_GOOGLE_CLIENT_ID }}
+          REACT_APP_GITHUB_CLIENT_ID: ${{ secrets.REACT_APP_GITHUB_CLIENT_ID }}
         run: |
           npm ci
           CI=false npm run build
