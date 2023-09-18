@@ -37,14 +37,14 @@ public class SecurityConfig {
         http.cors(cors -> {
             CorsConfiguration config = new CorsConfiguration();
             config.addAllowedOrigin("http://localhost:3000");
-            config.addAllowedOrigin("https://dbish6.github.io/Ideal_User_Authentication_Demos/");
+            config.addAllowedOrigin("https://dbish6.github.io");
             config.setMaxAge(3600L);
             config.setAllowedMethods(Arrays.asList(
                     HttpMethod.GET.name(),
                     HttpMethod.POST.name(),
                     HttpMethod.PATCH.name(),
-                    HttpMethod.DELETE.name()
-                    // HttpMethod.OPTIONS.name()
+                    HttpMethod.DELETE.name(),
+                    HttpMethod.OPTIONS.name()
             ));
             config.setAllowedHeaders(Arrays.asList(
                     HttpHeaders.ACCEPT,
@@ -52,6 +52,8 @@ public class SecurityConfig {
                     HttpHeaders.AUTHORIZATION,
                     "X-XSRF-TOKEN"
             ));
+            config.addExposedHeader("Access-Control-Allow-Methods");
+            config.addExposedHeader("Access-Control-Allow-Headers");
             config.setAllowCredentials(true);
 
             UrlBasedCorsConfigurationSource source =
