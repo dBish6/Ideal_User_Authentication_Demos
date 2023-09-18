@@ -29,7 +29,7 @@ const Form = () => {
     });
 
   const btnRef = useRef<HTMLButtonElement>(null),
-    havAccountRef = useRef<HTMLParagraphElement>(null),
+    havAccountRef = useRef<HTMLButtonElement>(null),
     footerLink1Ref = useRef<HTMLParagraphElement>(null),
     footerLink2Ref = useRef<HTMLParagraphElement>(null);
 
@@ -43,6 +43,8 @@ const Form = () => {
   return (
     <div className="formWrapper">
       <button
+        aria-pressed={isLogin}
+        aria-controls="loginForm registerForm"
         ref={btnRef}
         onClick={() => setIsLogin(!isLogin)}
         onKeyDown={(e) => handleKeyDown(e, btnRef)}
@@ -84,19 +86,15 @@ const Form = () => {
             />
           </div>
 
-          <p
-            role="button"
-            aria-pressed={isLogin}
-            aria-controls="loginForm"
-            tabIndex={0}
-            ref={havAccountRef}
-            onClick={() => setIsLogin(!isLogin)}
-            onKeyDown={(e) =>
-              handleKeyDown(e, havAccountRef, setIsLogin, [!isLogin])
-            }
-          >
-            Have a account?
-          </p>
+          <div className="haveAccount">
+            <button
+              aria-pressed={isLogin}
+              aria-controls="loginForm"
+              onClick={() => setIsLogin(!isLogin)}
+            >
+              Have a account?
+            </button>
+          </div>
         </div>
       ) : (
         <div className="formContent login">

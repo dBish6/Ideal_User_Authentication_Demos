@@ -22,6 +22,7 @@ const Register = ({ loading, toggleLoading }: FormProps) => {
 
   return (
     <form
+      id="registerForm"
       ref={formRef}
       onSubmit={handleSubmit(() => {
         toggleLoading({
