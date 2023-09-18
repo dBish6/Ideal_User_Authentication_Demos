@@ -37,11 +37,11 @@ The GitHub login involves several requests to GitHub's API. First on the front-e
 _**Remember**_<br />
 For the Github login to work locally, create your own 'OAuth App' on github.com and obtain your own `client ID` and `secret`; [https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app).
 
+## Deployment
+I tried to use free services for hosting. The back-end is deployed on `fly.io` for its free services, while the front-end is deployed using `GitHub Pages`, providing a straightforward way to showcase my application.
+
 ## Please Note
 I refer to this as an 'ideal' authentication flow, but it's important to note that the choices made here are based on general best practices. One aspect to consider is the use of the email as the unique identifier for users, which might not always be the best choice. However, for consistency and simplicity, I've chosen this approach. If you don't like using the email, you can just switch the unique identifier to an ID.
-
-### Deployment Note
-I deployed the back-ends with fly.io because of their free services, but sadly when using their free tier and adding an `upstash database` for Redis I was only allowed one per organization. So, on the live site, there is only one Redis cache for both Express and Spring Boot, unlike the dev environment where there are two Redis caches for both back-ends.
 
 ### _Thanks!_
 I hope this demo serves as a learning resource and a foundation for your own authentication implementations. Happy exploring!
