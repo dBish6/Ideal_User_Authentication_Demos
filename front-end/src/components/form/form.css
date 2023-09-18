@@ -179,25 +179,29 @@
   display: flex;
 }
 
-.formWrapper .formContent > p {
+.formWrapper .formContent .haveAccount {
+  display: flex;
+  justify-content: center;
+}
+
+.formWrapper .formContent .haveAccount button {
   position: relative;
   margin-top: 1rem;
+  background-color: transparent;
   font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--txt);
   text-decoration: underline solid var(--g400);
-  text-align: center;
-  cursor: pointer;
   transition: 0.2s ease-in-out background-color text-decoration-color;
 }
 
-.formWrapper .formContent > p:hover,
-.formWrapper .formContent > p:focus-visible,
-.formWrapper .formContent > p:active,
-.formWrapper .formContent > p.selected {
+.formWrapper .formContent .haveAccount button:hover,
+.formWrapper .formContent .haveAccount button:focus-visible,
+.formWrapper .formContent .haveAccount button:active {
   color: var(--hTxt);
 }
 
-.formWrapper .formContent > p:active,
-.formWrapper .formContent > p.selected {
+.formWrapper .formContent .haveAccount button:active {
   top: 1px;
   text-decoration-color: var(--g500);
 }

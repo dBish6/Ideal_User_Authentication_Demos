@@ -6,15 +6,11 @@ import { useGlobalContext } from "../../contexts/GlobalContext";
 import staticBackends from "../../constants/staticBackends";
 
 import SelectBox from "./SelectBox";
-import Button from "../button";
-
-import useKeyboardHelper from "../../hooks/useKeyboardHelper";
 
 const Selector = () => {
   const linkRef = useRef<HTMLAnchorElement>(null),
     { selectedBackEnd, setSelectedBackEnd } = useGlobalContext(),
-    navigate = useNavigate(),
-    handleKeyDown = useKeyboardHelper();
+    navigate = useNavigate();
 
   return (
     <>
@@ -27,17 +23,14 @@ const Selector = () => {
           key={i}
         />
       ))}
-      <Button
-        text="Proceed to Form"
+      <button
+        className="btnMain"
         style={{ maxWidth: "524px" }}
         onClick={() => selectedBackEnd && navigate("/login-register")}
-      />
-      <Link
-        to="/users"
-        className="usersLink"
-        ref={linkRef}
-        onKeyDown={(e) => handleKeyDown(e, linkRef)}
       >
+        <span className="btnTop">Proceed to Form</span>
+      </button>
+      <Link to="/users" className="usersLink" ref={linkRef}>
         View Register Users
       </Link>
     </>
