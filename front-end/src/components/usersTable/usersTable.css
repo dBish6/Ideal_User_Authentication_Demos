@@ -47,7 +47,6 @@ table thead tr th {
   font-weight: 600;
   color: var(--hTxt);
   padding: 1rem 0.5rem;
-  /* background-color: var(--lvl2); */
   background-color: var(--g100);
 }
 
