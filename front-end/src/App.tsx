@@ -40,7 +40,7 @@ const Structure = () => {
 
   // Persists the session on refreshes.
   GetSessionStatus();
-  // Refreshes user session in the background if access token is expired.
+  // Refreshes the user session in the background if access token is expired.
   PostSessionRefresh();
 
   return (
