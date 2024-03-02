@@ -45,3 +45,5 @@ I refer to this as an 'ideal' authentication flow, but it's important to note th
 
 ### _Thanks!_
 I hope this demo serves as a learning resource and a foundation for your own authentication implementations. Happy exploring!
+
+<a href="https://www.buymeacoffee.com/dBish" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
